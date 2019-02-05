@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zn">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Wang">
+    <meta name="description" content="John Doe&#39;s personal website">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="nginx配置踩坑--rewrite"/>
+<meta name="twitter:description" content="问题 在协助部署吉林wap商城代码时，nginx配置出现一个问题； 通常前端框架的nginx配置如下：
+location ~* \.(html|htm)$ { root /emallapp/Mobile_mall; etag off; if ($request_uri ~* &#34;^/([^/]*)/([^/]*).html&#34;) { set $appid $2; rewrite ^/([^/]*)/([^/]*).html /$2.html; } if ($request_uri ~* &#34;^/([^/]*)/([^/]*)/([^/]*).html&#34;) { set $appid $3; rewrite ^/([^/]*)/([^/]*)/([^/]*).html /$2.html; } index index.html index.htm; expires 1s; } 因为要增加上下文，需要在匹配html前先把上下文处理掉，否则资源文件无法找到：
+locatio~^/mall/ { rewrite ^/mall/(.*)$ /$1 last; } 问题就出现在这里，增加了这段代码后，上面的html匹配不到了
+原因 在nginx中， * $request_uri是初始的uri，并且不随rewrite变化 * $uri 是随rewrite变化的uri 而rewrite中，匹配的链接就是$uri 在上面的配置中，if条件的写法是正确的，而if条件体中rewrite这里出现了问题；
+在没有处理上下文时，rewrite的写法是正确的，这也是导致我先入为主，认为配置是正确的； 但是，由于进行了上下文处理，rewrite后，uri已经发生了变化；
+此时下面的rewrite中的正则表达式是改变后的$uri 因此正确的写法是这样：
+location ~* \.(html|htm)$ { root /emallapp/Mobile_mall; etag off; if ($request_uri ~* &#34;^/([^/]*)/([^/]*)."/>
+
+
+    <base href="http://wangfy263.github.io/posts/nginx%E9%85%8D%E7%BD%AE%E8%B8%A9%E5%9D%91-rewrite/">
+    <title>
+  nginx配置踩坑--rewrite · Wang
+</title>
+
+    <link rel="canonical" href="http://wangfy263.github.io/posts/nginx%E9%85%8D%E7%BD%AE%E8%B8%A9%E5%9D%91-rewrite/">
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700|Merriweather:300,700|Source+Code+Pro:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css" integrity="sha256-oSrCnRYXvHG31SBifqP2PM1uje7SJUyX0nTwO2RJV54=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="http://wangfy263.github.io/css/coder.min.ac37073bc2826cd28ef57364a9fe339de7ebcb26dafc22fd832cb35cf5b1d048.css" integrity="sha256-rDcHO8KCbNKO9XNkqf4znefryyba/CL9gyyzXPWx0Eg=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="http://wangfy263.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="http://wangfy263.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    
+
+    <meta name="generator" content="Hugo 0.54.0" />
+  </head>
+
+  <body class=" ">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="http://wangfy263.github.io/">
+      Wang
+    </a>
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+        
+        
+        
+          
+        
+          
+            
+              <li class="navigation-item menu-separator">
+                <span>|</span>
+              </li>
+              
+            
+            <li class="navigation-item">
+              <a href="http://wangfy263.github.io/zn/">中文</a>
+            </li>
+          
+        
+      
+    </ul>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">nginx配置踩坑--rewrite</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2018-09-05T18:52:43Z'>
+                September 5, 2018
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              One minute read
+            </span>
+          </div>
+          
+          
+        </div>
+      </header>
+
+      <div>
+        
+
+<h2 id="问题">问题</h2>
+
+<p>在协助部署吉林wap商城代码时，nginx配置出现一个问题；
+通常前端框架的nginx配置如下：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">        location ~* \.(html|htm)$ {
+            root /emallapp/Mobile_mall;
+            etag off;
+         if ($request_uri ~* &#34;^/([^/]*)/([^/]*).html&#34;) {
+                set $appid $2;
+                rewrite ^/([^/]*)/([^/]*).html /$2.html;
+            }
+            if ($request_uri ~* &#34;^/([^/]*)/([^/]*)/([^/]*).html&#34;) {
+                set $appid $3;
+                rewrite ^/([^/]*)/([^/]*)/([^/]*).html /$2.html;
+            }
+            index index.html index.htm;
+            expires 1s;
+        }</pre></div>
+<p>因为要增加上下文，需要在匹配html前先把上下文处理掉，否则资源文件无法找到：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">locatio~^/mall/ {
+        rewrite ^/mall/(.*)$ /$1 last;
+}</pre></div>
+<p>问题就出现在这里，增加了这段代码后，上面的html匹配不到了</p>
+
+<h2 id="原因">原因</h2>
+
+<p>在nginx中，
+* $request_uri是初始的uri，并且不随rewrite变化
+* $uri  是随rewrite变化的uri
+而rewrite中，匹配的链接就是$uri
+在上面的配置中，if条件的写法是正确的，而if条件体中rewrite这里出现了问题；</p>
+
+<p>在没有处理上下文时，rewrite的写法是正确的，这也是导致我先入为主，认为配置是正确的；
+但是，由于进行了上下文处理，rewrite后，uri已经发生了变化；</p>
+
+<p>此时下面的rewrite中的正则表达式是改变后的$uri
+因此正确的写法是这样：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">        location ~* \.(html|htm)$ {
+            root /emallapp/Mobile_mall;
+            etag off;
+         if ($request_uri ~* &#34;^/([^/]*)/([^/]*).html&#34;) {
+                set $appid $2;
+            }
+            if ($request_uri ~* &#34;^/([^/]*)/([^/]*)/([^/]*).html&#34;) {
+                set $appid $3;
+                rewrite ^/([^/]*)/([^/]*).html /$2.html;
+            }
+            index index.html index.htm;
+            expires 1s;
+        }</pre></div>
+<p>因为处理了上下文，所以rewrite时需要减少一个匹配组</p>
+
+<h2 id="总结">总结</h2>
+
+<p>rewrite中的匹配组对应的是$uri，收到rewrite的影响</p>
+
+      </div>
+
+      <footer>
+        <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <footer class="footer">
+  <section class="container">
+    
+      <p>Enter a text here.</p>
+    
+     © 2019
+    
+       · 
+      Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    
+    
+       · 
+      [<a href="https://github.com/luizdepra/hugo-coder/tree/"></a>]
+    
+  </section>
+</footer>
+
+    </main>
+
+    
+
+  </body>
+
+</html>

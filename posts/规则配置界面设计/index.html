@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zn">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Wang">
+    <meta name="description" content="John Doe&#39;s personal website">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="营销活动规则配置VUE实现"/>
+<meta name="twitter:description" content="背景 山西移动电子渠道营销项目中，需要实现营销活动的可视化配置能力 其中一部分重点内容是如何实现活动规则的可视化配置；
+功能描述  营销活动通常意味着需要条件，满足某些条件，才可以参加活动，这些条件我称之为“规则” 在营销能力提升项目中，需要在后台编辑营销活动时，同时给营销活动设置“规则”；发布至前台工程后，可根据后台配置的“规则”进行验证；   需求细化  此功能并不是针对某个营销活动，而是通用型的解决方案；“规则”要不断添加积累 已有“规则”需要支持各种排列组合； “规则”的编辑和修改需要实时生效，以应对营销活动的频繁变化；  界面设计 * 规则分为基础规则（必选规则），以及其他规则（可选规则） * 可选规则可动态添加删除 * 部分规则可重复添加 * 每个规则都需要进行输入验证 * 提交时要对所有规则进行验证
+接口设计 前端设计重点 每个规则抽象为单独的VUE组件，需要在父组件中动态加载子组件； 动态组件可以通过 Vue 的 &lt;component&gt; 元素加一个特殊的 is 特性来实现：
+&lt;component v-bind:is=&#34;currentTabComponent&#34;&gt;&lt;/component&gt; 在上述示例中，currentTabComponent 可以包括
+ 已注册组件的名字，或 一个组件的选项对象  如何获取界面上已经添加的组件 可以通过给子组件增加ref属性，为这个子组件赋予一个ID引用。
+&lt;base-input ref=&#34;usernameInput&#34;&gt;&lt;/base-input&gt; 现在已经定义了这个 ref 的组件里，可以使用：
+this.$refs.usernameInput 来访问这个 &lt;base-input&gt; 实例
+通过这种方式，我们可以在添加组件是记录组件的ref，在提交验证时，通过记录的ref属性，找到页面上已经添加的子组件（规则组件）
+for (let ref in refs) { // 查找页面中存在的子组件 if (Object.prototype.toString.call(refs[ref]) === &#39;[object Object]&#39;) { refs[ref]."/>
+
+
+    <base href="http://wangfy263.github.io/posts/%E8%A7%84%E5%88%99%E9%85%8D%E7%BD%AE%E7%95%8C%E9%9D%A2%E8%AE%BE%E8%AE%A1/">
+    <title>
+  营销活动规则配置VUE实现 · Wang
+</title>
+
+    <link rel="canonical" href="http://wangfy263.github.io/posts/%E8%A7%84%E5%88%99%E9%85%8D%E7%BD%AE%E7%95%8C%E9%9D%A2%E8%AE%BE%E8%AE%A1/">
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700|Merriweather:300,700|Source+Code+Pro:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css" integrity="sha256-oSrCnRYXvHG31SBifqP2PM1uje7SJUyX0nTwO2RJV54=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="http://wangfy263.github.io/css/coder.min.ac37073bc2826cd28ef57364a9fe339de7ebcb26dafc22fd832cb35cf5b1d048.css" integrity="sha256-rDcHO8KCbNKO9XNkqf4znefryyba/CL9gyyzXPWx0Eg=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="http://wangfy263.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="http://wangfy263.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    
+
+    <meta name="generator" content="Hugo 0.54.0" />
+  </head>
+
+  <body class=" ">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="http://wangfy263.github.io/">
+      Wang
+    </a>
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+        
+        
+        
+          
+        
+          
+            
+              <li class="navigation-item menu-separator">
+                <span>|</span>
+              </li>
+              
+            
+            <li class="navigation-item">
+              <a href="http://wangfy263.github.io/zn/">中文</a>
+            </li>
+          
+        
+      
+    </ul>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">营销活动规则配置VUE实现</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2018-08-02T18:16:47Z'>
+                August 2, 2018
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              One minute read
+            </span>
+          </div>
+          
+          
+        </div>
+      </header>
+
+      <div>
+        
+
+<h4 id="背景">背景</h4>
+
+<p>山西移动电子渠道营销项目中，需要实现营销活动的可视化配置能力
+<img src="语境图.jpg" alt="语境图" /></p>
+
+<p>其中一部分重点内容是如何实现活动规则的可视化配置；</p>
+
+<h4 id="功能描述">功能描述</h4>
+
+<ul>
+<li>营销活动通常意味着需要条件，满足某些条件，才可以参加活动，这些条件我称之为“规则”</li>
+<li>在营销能力提升项目中，需要在后台编辑营销活动时，同时给营销活动设置“规则”；发布至前台工程后，可根据后台配置的“规则”进行验证；
+<img src="规则配置流程.jpg" alt="规则配置流程" /></li>
+</ul>
+
+<h4 id="需求细化">需求细化</h4>
+
+<ul>
+<li>此功能并不是针对某个营销活动，而是通用型的解决方案；“规则”要不断添加积累</li>
+<li>已有“规则”需要支持各种排列组合；</li>
+<li>“规则”的编辑和修改需要实时生效，以应对营销活动的频繁变化；</li>
+</ul>
+
+<h4 id="界面设计">界面设计</h4>
+
+<p><img src="规则配置界面设计.jpg" alt="规则配置界面" />
+* 规则分为基础规则（必选规则），以及其他规则（可选规则）
+* 可选规则可动态添加删除
+* 部分规则可重复添加
+* 每个规则都需要进行输入验证
+* 提交时要对所有规则进行验证</p>
+
+<h4 id="接口设计">接口设计</h4>
+
+<p><img src="规则列表查询接口.png" alt="规则列表查询接口" />
+<img src="规则配置保存接口.png" alt="规则配置保存接口" /></p>
+
+<h4 id="前端设计重点">前端设计重点</h4>
+
+<h5 id="每个规则抽象为单独的vue组件-需要在父组件中动态加载子组件">每个规则抽象为单独的VUE组件，需要在父组件中动态加载子组件；</h5>
+
+<p>动态组件可以通过 Vue 的 <code>&lt;component&gt;</code> 元素加一个特殊的 is 特性来实现：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;component v-bind:is=&#34;currentTabComponent&#34;&gt;&lt;/component&gt;</pre></div>
+<p>在上述示例中，currentTabComponent 可以包括</p>
+
+<ul>
+<li>已注册组件的名字，或</li>
+<li>一个组件的选项对象</li>
+</ul>
+
+<h5 id="如何获取界面上已经添加的组件">如何获取界面上已经添加的组件</h5>
+
+<p>可以通过给子组件增加ref属性，为这个子组件赋予一个ID引用。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;base-input ref=&#34;usernameInput&#34;&gt;&lt;/base-input&gt;</pre></div>
+<p>现在已经定义了这个 ref 的组件里，可以使用：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">this.$refs.usernameInput</pre></div>
+<p>来访问这个 <code>&lt;base-input&gt;</code> 实例</p>
+
+<p>通过这种方式，我们可以在添加组件是记录组件的ref，在提交验证时，通过记录的ref属性，找到页面上已经添加的子组件（规则组件）</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">for (let ref in refs) { // 查找页面中存在的子组件
+    if (Object.prototype.toString.call(refs[ref]) === &#39;[object Object]&#39;) {
+        refs[ref].submitForm()
+    }
+    if (Object.prototype.toString.call(refs[ref]) === &#39;[object Array]&#39; &amp;&amp; refs[ref].length &gt; 0) {
+        refs[ref].forEach((each) =&gt; {
+            each.submitForm()
+        })
+    }
+}</pre></div>
+<h5 id="规则内容校验-每个规则都需要进行输入验证-组件动态加载过程如何与验证逻辑绑定">规则内容校验，每个规则都需要进行输入验证，组件动态加载过程如何与验证逻辑绑定</h5>
+
+<p>规则的输入校验如果都放在父组件进行，需要处理太多的交互逻辑，不利于代码的维护；
+因此，我把每个规则的输入校验，都放在各子组件内部进行，父组件只需要知道结果就可以了</p>
+
+<p>当父组件需要发起验证时，向各个子组件发起验证请求，子组件收到请求后，执行输入校验，并把验证结果通过emit事件通知给父组件；父组件收集子组件的通知，并判断是否全部通过，只有全部通过才可以继续执行；
+<img src="父子组件交互设计.jpg" alt="父子组件交互" /></p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-父组件" data-lang="父组件">submit () {// 向子组件发起验证请求
+    let resCollect = this.checkResult = {}
+    let refs = this.$refs
+    this.ruleMap = {}
+    this.dataItems = []
+    for (let ref in refs) {// 向子组件发起验证请求
+        if (Object.prototype.toString.call(refs[ref]) === &#39;[object Object]&#39;) {
+            refs[ref].submitForm()
+        }
+        if (Object.prototype.toString.call(refs[ref]) === &#39;[object Array]&#39; &amp;&amp; refs[ref].length &gt; 0) {
+            refs[ref].forEach((each) =&gt; {
+                each.submitForm()
+            })
+        }
+    }
+}
+checkResultFn (res) { // 接收子组件的通知，并记录结果
+    if (this.checkResult[res.name] !== undefined) {
+        this.checkResult[res.name] = this.checkResult[res.name] &amp;&amp; res.result
+    } else {
+        this.checkResult[res.name] = res.result
+    }
+}</code></pre></div><div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-子组件" data-lang="子组件">submitForm() { 
+    // 执行表单输入检测
+    this.$refs[&#39;form&#39;].validate((valid) =&gt; {
+        // 将结果通知给父组件
+        this.$emit(&#39;checkResult&#39;, {
+            name: this.name,
+            result: valid,
+            data: this.form.checkedChannels
+        })
+    })
+}</code></pre></div>
+      </div>
+
+      <footer>
+        <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <footer class="footer">
+  <section class="container">
+    
+      <p>Enter a text here.</p>
+    
+     © 2019
+    
+       · 
+      Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    
+    
+       · 
+      [<a href="https://github.com/luizdepra/hugo-coder/tree/"></a>]
+    
+  </section>
+</footer>
+
+    </main>
+
+    
+
+  </body>
+
+</html>

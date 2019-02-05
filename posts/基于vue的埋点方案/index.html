@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zn">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Wang">
+    <meta name="description" content="John Doe&#39;s personal website">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="基于vue的埋点方案"/>
+<meta name="twitter:description" content="buried-point基于vue的埋点方案 安装Install npm install buried-point 配置configuration main.js中进行如下配置：  import BuriedPoint from &lsquo;buried-point&rsquo;
+let option = { router: router, //vue路由对象 domain: &lsquo;127.0.0.1:18080&rsquo;, //埋点服务器地址 path: &lsquo;/nresource/dcsImg&rsquo; //埋点请求路径 /nresource/dcsImg/dcs.log } Vue.use(BuriedPoint, option)
+
+开始使用start  1.v-ready-stat指令，用于采集页面加载完成时数据 在需要采集数据的vue组件根节点上声明埋点指令v-ready-stat
+  &lt;template&gt; &lt;div class=&#34;button-content&#34; v-ready-stat&gt; &lt;/template&gt;   如果需要在页面加载时传递数据，v-ready-stat指令可以接收json格式的参数{&#39;SI.si_n&#39;:&#39;WEB&#39;, &#39;SI.si_x&#39;:&#39;002&#39;}
+  &lt;div class=&#34;icon-content&#34; v-ready-stat=&#34;{&#39;SI.si_n&#39;:&#39;xxx&#39;,&#39;SI.si_x&#39;:&#39;009&#39;}&#34;&gt;   2.v-click-stat指令，用于采集用户点击事件的数据 在被点击的dom节点上声明埋点指令v-click-stat,数据格式{&#39;SI.si_n&#39;:&#39;WEB&#39;, &#39;SI.si_x&#39;:&#39;002&#39;}
+  &lt;el-button type=&#34;text&#34; v-data-stat=&#34;{&#39;SI.si_n&#39;:&#39;WEB&#39;, &#39;SI.si_x&#39;:&#39;002&#39;}&#34;&gt;{{message}}&lt;/el-button&gt;   3.命令式采集业务码 针对需要在业务逻辑中进行埋点的特殊场景，提供命令式埋点方案； 在vue组件中需要import埋点插件import bp from &#39;buried-Point&#39;,在需要埋点的位置调用埋点方法bp.dcsMultiTrack(&#39;SI.si_n&#39;, &#39;WEB_Q&#39;, &#39;SI."/>
+
+
+    <base href="http://wangfy263.github.io/posts/%E5%9F%BA%E4%BA%8Evue%E7%9A%84%E5%9F%8B%E7%82%B9%E6%96%B9%E6%A1%88/">
+    <title>
+  基于vue的埋点方案 · Wang
+</title>
+
+    <link rel="canonical" href="http://wangfy263.github.io/posts/%E5%9F%BA%E4%BA%8Evue%E7%9A%84%E5%9F%8B%E7%82%B9%E6%96%B9%E6%A1%88/">
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700|Merriweather:300,700|Source+Code+Pro:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css" integrity="sha256-oSrCnRYXvHG31SBifqP2PM1uje7SJUyX0nTwO2RJV54=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="http://wangfy263.github.io/css/coder.min.ac37073bc2826cd28ef57364a9fe339de7ebcb26dafc22fd832cb35cf5b1d048.css" integrity="sha256-rDcHO8KCbNKO9XNkqf4znefryyba/CL9gyyzXPWx0Eg=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="http://wangfy263.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="http://wangfy263.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    
+
+    <meta name="generator" content="Hugo 0.54.0" />
+  </head>
+
+  <body class=" ">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="http://wangfy263.github.io/">
+      Wang
+    </a>
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+        
+        
+        
+          
+        
+          
+            
+              <li class="navigation-item menu-separator">
+                <span>|</span>
+              </li>
+              
+            
+            <li class="navigation-item">
+              <a href="http://wangfy263.github.io/zn/">中文</a>
+            </li>
+          
+        
+      
+    </ul>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">基于vue的埋点方案</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2018-05-07T08:59:01Z'>
+                May 7, 2018
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              One minute read
+            </span>
+          </div>
+          
+          
+        </div>
+      </header>
+
+      <div>
+        
+
+<h1 id="buried-point基于vue的埋点方案">buried-point基于vue的埋点方案</h1>
+
+<h2 id="安装install">安装Install</h2>
+
+<pre><code>npm install buried-point</code></pre>
+
+<h2 id="配置configuration">配置configuration</h2>
+
+<p><code>main.js</code>中进行如下配置：
+<pre><code>
+  import BuriedPoint from &lsquo;buried-point&rsquo;</p>
+
+<p>let option = {
+    router: router,  //vue路由对象
+    domain: &lsquo;127.0.0.1:18080&rsquo;,  //埋点服务器地址
+    path: &lsquo;/nresource/dcsImg&rsquo;   //埋点请求路径  <code>/nresource/dcsImg/dcs.log</code>
+  }
+  Vue.use(BuriedPoint, option)</p>
+
+<p></code></pre></p>
+
+<h2 id="开始使用start">开始使用start</h2>
+
+<blockquote>
+<p>1.<code>v-ready-stat</code>指令，用于采集页面加载完成时数据
+在需要采集数据的vue组件根节点上声明埋点指令<code>v-ready-stat</code></p>
+</blockquote>
+
+<pre><code>
+  &lt;template&gt;
+  &lt;div class="button-content" v-ready-stat&gt;
+  &lt;/template&gt;
+</code></pre>
+
+<blockquote>
+<p>如果需要在页面加载时传递数据，<code>v-ready-stat</code>指令可以接收<code>json</code>格式的参数<code>{'SI.si_n':'WEB', 'SI.si_x':'002'}</code></p>
+</blockquote>
+
+<pre><code>
+  &lt;div class="icon-content" v-ready-stat="{'SI.si_n':'xxx','SI.si_x':'009'}"&gt;
+</code></pre>
+
+<blockquote>
+<p>2.<code>v-click-stat</code>指令，用于采集用户点击事件的数据
+在被点击的dom节点上声明埋点指令<code>v-click-stat</code>,数据格式<code>{'SI.si_n':'WEB', 'SI.si_x':'002'}</code></p>
+</blockquote>
+
+<pre><code>
+    &lt;el-button type="text" v-data-stat="{'SI.si_n':'WEB', 'SI.si_x':'002'}"&gt;{{message}}&lt;/el-button&gt;
+</code></pre>
+
+<blockquote>
+<p>3.命令式采集业务码
+针对需要在业务逻辑中进行埋点的特殊场景，提供命令式埋点方案；
+在vue组件中需要<code>import</code>埋点插件<code>import bp from 'buried-Point'</code>,在需要埋点的位置调用埋点方法<code>bp.dcsMultiTrack('SI.si_n', 'WEB_Q', 'SI.si_x', '005')</code></p>
+</blockquote>
+
+<pre><code>
+import bp from 'buried-Point'
+export default {
+  //在vue组件的生命周期钩子mounted阶段，进行埋点
+  mounted() {
+    bp.dcsMultiTrack('SI.si_n', 'WEB_Q', 'SI.si_x', '005')
+  }
+}
+</code></pre>
+
+      </div>
+
+      <footer>
+        <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <footer class="footer">
+  <section class="container">
+    
+      <p>Enter a text here.</p>
+    
+     © 2019
+    
+       · 
+      Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    
+    
+       · 
+      [<a href="https://github.com/luizdepra/hugo-coder/tree/"></a>]
+    
+  </section>
+</footer>
+
+    </main>
+
+    
+
+  </body>
+
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zn">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Wang">
+    <meta name="description" content="John Doe&#39;s personal website">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="和生活首页在部分机型下白屏原因分析"/>
+<meta name="twitter:description" content=" 问题 和生活首页在世界杯活动上线后，发现极个别iphone手机（1部iphone6plus、1部iphone7）首页出现白屏，但其他同事的iphone6plus、iphone7正常
+问题分析 出现问题的两部手机分别是：iphone6plus（ios8.2）、iphone7（ios10.1.1）；其他同型号未出现问题的手机，系统均是ios11，因此推断是ios兼容性导致的问题；
+ios8.2 借助mac系统的调试工具查看，发现在ios8下首页出现报错信息，信息显示不支持Class语法；
+Class语法是ES6标准中新增的，在ios8并不支持；
+查找错误信息所在位置，是swiper组件依赖的Dom7库；
+swiper是首页改版时引入的新的轮播图插件，也就是说导致ios8，白屏的原因是swiper中有ES6的语法；
+ios10.1.1 在swiper的github上找到关于ios10的issue issue中并没有给出具体的解决方案； 在framework7关于Dom7的issue中，找到： 确保您的webpack / babel还将导入的F7转换为ES5，并解析F7的节点模块
+那么基本可以确认ios10.1.1也不支持ES6的语法；
+查询一下: 可以看到，ES6的class语法是从ios10.3版本开始兼容的，ios10.1.1并不兼容该语法
+与印象中不同，实际上几乎所有的ES6语法都是从ios10.3开始兼容的 解决方案 按照issue中所述的解决方案，只需要将ES6的语法转为ES5即可；
+webpack中的babel插件默认是不会对node_modules下的文件进行转换的，因此需要显示的将swiper和dom7的文件进行转换 "/>
+
+
+    <base href="http://wangfy263.github.io/posts/%E9%A6%96%E9%A1%B5%E5%9C%A8%E9%83%A8%E5%88%86%E6%9C%BA%E5%9E%8B%E4%B8%8B%E7%99%BD%E5%B1%8F%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/">
+    <title>
+  和生活首页在部分机型下白屏原因分析 · Wang
+</title>
+
+    <link rel="canonical" href="http://wangfy263.github.io/posts/%E9%A6%96%E9%A1%B5%E5%9C%A8%E9%83%A8%E5%88%86%E6%9C%BA%E5%9E%8B%E4%B8%8B%E7%99%BD%E5%B1%8F%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/">
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700|Merriweather:300,700|Source+Code+Pro:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css" integrity="sha256-oSrCnRYXvHG31SBifqP2PM1uje7SJUyX0nTwO2RJV54=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="http://wangfy263.github.io/css/coder.min.ac37073bc2826cd28ef57364a9fe339de7ebcb26dafc22fd832cb35cf5b1d048.css" integrity="sha256-rDcHO8KCbNKO9XNkqf4znefryyba/CL9gyyzXPWx0Eg=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="http://wangfy263.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="http://wangfy263.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    
+
+    <meta name="generator" content="Hugo 0.54.0" />
+  </head>
+
+  <body class=" ">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="http://wangfy263.github.io/">
+      Wang
+    </a>
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+        
+        
+        
+          
+        
+          
+            
+              <li class="navigation-item menu-separator">
+                <span>|</span>
+              </li>
+              
+            
+            <li class="navigation-item">
+              <a href="http://wangfy263.github.io/zn/">中文</a>
+            </li>
+          
+        
+      
+    </ul>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">和生活首页在部分机型下白屏原因分析</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2018-07-16T16:53:15Z'>
+                July 16, 2018
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              One minute read
+            </span>
+          </div>
+          
+          
+        </div>
+      </header>
+
+      <div>
+        
+
+<h2 id="问题">问题</h2>
+
+<p>和生活首页在世界杯活动上线后，发现极个别iphone手机（1部iphone6plus、1部iphone7）首页出现白屏，但其他同事的iphone6plus、iphone7正常</p>
+
+<h2 id="问题分析">问题分析</h2>
+
+<p>出现问题的两部手机分别是：iphone6plus（ios8.2）、iphone7（ios10.1.1）；其他同型号未出现问题的手机，系统均是ios11，因此推断是ios兼容性导致的问题；</p>
+
+<h2 id="ios8-2">ios8.2</h2>
+
+<p>借助mac系统的调试工具查看，发现在ios8下首页出现报错信息，信息显示不支持Class语法；</p>
+
+<p>Class语法是ES6标准中新增的，在ios8并不支持；</p>
+
+<p>查找错误信息所在位置，是swiper组件依赖的Dom7库；</p>
+
+<p>swiper是首页改版时引入的新的轮播图插件，也就是说导致ios8，白屏的原因是swiper中有ES6的语法；</p>
+
+<h2 id="ios10-1-1">ios10.1.1</h2>
+
+<p>在swiper的github上找到关于ios10的issue
+<img src="ios10报错.jpg" alt="issue" />
+issue中并没有给出具体的解决方案；
+<img src="说明1.jpg" alt="issue" />
+在framework7关于Dom7的issue中，找到：
+<img src="说明2.jpg" alt="issue" /></p>
+
+<p>确保您的webpack / babel还将导入的F7转换为ES5，并解析F7的节点模块</p>
+
+<p>那么基本可以确认ios10.1.1也不支持ES6的语法；</p>
+
+<p>查询一下:
+<img src="class兼容性.jpg" alt="class兼容性" />
+可以看到，ES6的class语法是从ios10.3版本开始兼容的，ios10.1.1并不兼容该语法</p>
+
+<p>与印象中不同，实际上几乎所有的ES6语法都是从ios10.3开始兼容的
+<img src="let兼容性.jpg" alt="let兼容性" />
+<img src="箭头函数兼容性.jpg" alt="箭头函数兼容性" />
+<img src="generators兼容性.jpg" alt="Generators兼容性" /></p>
+
+<h2 id="解决方案">解决方案</h2>
+
+<p>按照issue中所述的解决方案，只需要将ES6的语法转为ES5即可；</p>
+
+<p>webpack中的babel插件默认是不会对node_modules下的文件进行转换的，因此需要显示的将swiper和dom7的文件进行转换
+<img src="webpack配置.jpg" alt="webpack配置" /></p>
+
+      </div>
+
+      <footer>
+        <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <footer class="footer">
+  <section class="container">
+    
+      <p>Enter a text here.</p>
+    
+     © 2019
+    
+       · 
+      Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    
+    
+       · 
+      [<a href="https://github.com/luizdepra/hugo-coder/tree/"></a>]
+    
+  </section>
+</footer>
+
+    </main>
+
+    
+
+  </body>
+
+</html>

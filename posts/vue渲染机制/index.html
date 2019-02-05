@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zn">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Wang">
+    <meta name="description" content="John Doe&#39;s personal website">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="从开发一个vue组件深入理解vue的渲染机制"/>
+<meta name="twitter:description" content="背景 近期在做一个前端推荐的组件，类似与各个APP打开时弹出的推荐效果，效果如下： 同时需要支持推荐多个，UED给出的效果图是类似轮播图的实现。 我需要将这个效果封装成一个独立的模块，提供给多个前端（和生活、营销）的多个位置使用（首页、营销活动页面。。）使用；
+组件设计 在vue中，任何一个独立的UI模块都可以封装成（.vue）的组件；一般情况下，vue的组件都对应一个html自定义标签，在编译过程中，把组件模板替换到标签位置。但这种方式不适合当前的场景，推荐组件应该是一个全局组件，类似于alert的效果， 不需要设置html标签； 为了实现这种方式，需要先理解vue的组件是如何渲染的；
+渲染机制 vue是将el或template字段传入的内容编译成渲染函数，渲染函数会把模板编译成虚拟DOM节点，同时每个渲染函数都对应一个观察者（watcher), watcher会监听每个数据的get和set操作，这样就实现了当数据修改时能同步渲染DOM树；
+这里我们重点关注前半部分，也就是el转换为template，template生成渲染函数；
+这部分的源码在src/platforms/web/entry-runtime-with-compiler.js中。
+大致的实现是这样的： * 如果 template 选项不存在，那么使用 el 元素的 outerHTML 作为模板内容 * 如果 template 选项存在，且 template 的类型是字符串，有分两种情况： ** 如果第一个字符是 #，那么会把该字符串作为 css 选择符去选中对应的元素，并把该元素的 innerHTML 作为模板 ** 如果第一个字符不是 #，那么什么都不做，就用 template 自身的字符串值作为模板 * 如果 template 选项存在，且 template 的类型是元素节点(template.nodeType 存在)则使用该元素的 innerHTML 作为模板
+我们项目中常用的单文件组件（.vue文件）会在打包时通过vue-loader直接编译成渲染函数；
+这是通常我们组件的渲染流程，我们需要el作为挂载点把编译后的模板挂载在DOM树上；
+如果要实现类似alert的效果，还不够！
+$mount挂载函数 参考elementUI组件的设计，采用$mount函数实现异步挂载；
+实际上在vue实例化的过程中，就是通过$mount函数进行模板编译的，我们前面讨论的渲染过程就是在完整版vue的$mount函数中进行的；
+同时，$mount也是vue的实例方法，可通过vue的实例调用；
+回到组件的设计： 1、组件本身是独立的vue实例，一个通过extend创建的Vue的‘子类’；
+import Vue from &#39;vue&#39;; import Main from &#39;./main.vue&#39;; const RecommondConstructor = Vue."/>
+
+
+    <base href="http://wangfy263.github.io/posts/vue%E6%B8%B2%E6%9F%93%E6%9C%BA%E5%88%B6/">
+    <title>
+  从开发一个vue组件深入理解vue的渲染机制 · Wang
+</title>
+
+    <link rel="canonical" href="http://wangfy263.github.io/posts/vue%E6%B8%B2%E6%9F%93%E6%9C%BA%E5%88%B6/">
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700|Merriweather:300,700|Source+Code+Pro:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css" integrity="sha256-oSrCnRYXvHG31SBifqP2PM1uje7SJUyX0nTwO2RJV54=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="http://wangfy263.github.io/css/coder.min.ac37073bc2826cd28ef57364a9fe339de7ebcb26dafc22fd832cb35cf5b1d048.css" integrity="sha256-rDcHO8KCbNKO9XNkqf4znefryyba/CL9gyyzXPWx0Eg=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="http://wangfy263.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="http://wangfy263.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    
+
+    <meta name="generator" content="Hugo 0.54.0" />
+  </head>
+
+  <body class=" ">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="http://wangfy263.github.io/">
+      Wang
+    </a>
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+        
+        
+        
+          
+        
+          
+            
+              <li class="navigation-item menu-separator">
+                <span>|</span>
+              </li>
+              
+            
+            <li class="navigation-item">
+              <a href="http://wangfy263.github.io/zn/">中文</a>
+            </li>
+          
+        
+      
+    </ul>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">从开发一个vue组件深入理解vue的渲染机制</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2018-10-12T15:33:22Z'>
+                October 12, 2018
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              One minute read
+            </span>
+          </div>
+          
+          
+        </div>
+      </header>
+
+      <div>
+        
+
+<h2 id="背景">背景</h2>
+
+<p>近期在做一个前端推荐的组件，类似与各个APP打开时弹出的推荐效果，效果如下：
+<img src="效果图.jpg" alt="效果图" />
+同时需要支持推荐多个，UED给出的效果图是类似轮播图的实现。
+我需要将这个效果封装成一个独立的模块，提供给多个前端（和生活、营销）的多个位置使用（首页、营销活动页面。。）使用；</p>
+
+<h2 id="组件设计">组件设计</h2>
+
+<p>在vue中，任何一个独立的UI模块都可以封装成（.vue）的组件；一般情况下，vue的组件都对应一个html自定义标签，在编译过程中，把组件模板替换到标签位置。但这种方式不适合当前的场景，推荐组件应该是一个全局组件，类似于alert的效果， 不需要设置html标签；
+为了实现这种方式，需要先理解vue的组件是如何渲染的；</p>
+
+<h2 id="渲染机制">渲染机制</h2>
+
+<p>vue是将el或template字段传入的内容编译成渲染函数，渲染函数会把模板编译成虚拟DOM节点，同时每个渲染函数都对应一个观察者（watcher), watcher会监听每个数据的get和set操作，这样就实现了当数据修改时能同步渲染DOM树；</p>
+
+<p><img src="vue渲染机制.png" alt="渲染机制" /></p>
+
+<p>这里我们重点关注前半部分，也就是el转换为template，template生成渲染函数；</p>
+
+<p>这部分的源码在src/platforms/web/entry-runtime-with-compiler.js中。</p>
+
+<p>大致的实现是这样的：
+* 如果 template 选项不存在，那么使用 el 元素的 outerHTML 作为模板内容
+* 如果 template 选项存在，且 template 的类型是字符串，有分两种情况：
+** 如果第一个字符是 #，那么会把该字符串作为 css 选择符去选中对应的元素，并把该元素的 innerHTML 作为模板
+** 如果第一个字符不是 #，那么什么都不做，就用 template 自身的字符串值作为模板
+* 如果 template 选项存在，且 template 的类型是元素节点(template.nodeType 存在)则使用该元素的 innerHTML 作为模板</p>
+
+<p>我们项目中常用的单文件组件（.vue文件）会在打包时通过vue-loader直接编译成渲染函数；</p>
+
+<p>这是通常我们组件的渲染流程，我们需要el作为挂载点把编译后的模板挂载在DOM树上；</p>
+
+<p>如果要实现类似alert的效果，还不够！</p>
+
+<h2 id="mount挂载函数">$mount挂载函数</h2>
+
+<p>参考elementUI组件的设计，采用$mount函数实现异步挂载；</p>
+
+<p><img src="$mount使用方法.jpg" alt="$mount官网介绍" /></p>
+
+<p>实际上在vue实例化的过程中，就是通过$mount函数进行模板编译的，我们前面讨论的渲染过程就是在完整版vue的$mount函数中进行的；</p>
+
+<p>同时，$mount也是vue的实例方法，可通过vue的实例调用；</p>
+
+<p>回到组件的设计：
+1、组件本身是独立的vue实例，一个通过extend创建的Vue的‘子类’；</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">import Vue from &#39;vue&#39;;
+import Main from &#39;./main.vue&#39;;
+const RecommondConstructor = Vue.extend(Main);</pre></div>
+<p>2、和创建普通vue实例一样,通过new的方式创建实例；</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">instance = new RecommondConstructor({
+  data: { list: options },
+});</pre></div>
+<p>3、创建实例后，调用$mount挂载函数，创建实例的选项中不设置el，根据$mount官方说明，模板将被渲染为文档之外的的元素；</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">instance.vm = instance.$mount();</pre></div>
+<p>4、在实例挂载之后，元素可以用 vm.$el 访问。再通过原生的DOM API添加到body中；</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">document.body.appendChild(instance.vm.$el);</pre></div>
+<p>5、最后通过插件的方式，把上面组件的实例化方法挂在vue的实例上；</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">import recommond from &#39;./main&#39;;
+const install = function install(Vue, opts = {}) {
+  Vue.component(&#39;recommondImage&#39;, recommond);
+  Vue.prototype.$recommond = {
+    show: recommond,
+  };
+};</pre></div>
+<p>这样通过，调用this.recommond.show()方法，就会显示推荐组件；</p>
+
+<h2 id="dom操作">DOM操作</h2>
+
+<p>前面提到了，推荐组件需要支持轮播效果，需要借助swiper来实现；</p>
+
+<p>swiper是直接通过操作DOM来实现效果的，因此需要在组件完全渲染到DOM树上之后再进行swiper的实例化；</p>
+
+<p>这里有一个问题，在组件的mounted生命周期里是否完成DOM的加载？</p>
+
+<p>一般来说，mounted生命周期中是可以操作DOM树的，但是在我们设计的推荐组件中，是不可以的！</p>
+
+<p>在这个例子中，组件在调用$mount时，没有传入el，因此模板将被渲染为文档之外的的元素；也就是说DOM文档树上还没有组件的节点；</p>
+
+<p>我们是通过DOM API异步加载在DOM树上的；</p>
+
+<p>因此mounted生命周期中直接操作DOM是不可行的；</p>
+
+<h2 id="nexttick函数">nextTick函数</h2>
+
+<p>将回调延迟到下次 DOM 更新循环之后执行。在修改数据之后立即使用它，然后等待 DOM 更新。</p>
+
+<p>先来看下nextTick的实现原理；</p>
+
+<h4 id="事件循环">事件循环</h4>
+
+<p>下图是js的事件循环机制：
+<img src="事件循环.png" alt="事件循环机制" /></p>
+
+<h4 id="任务队列">任务队列</h4>
+
+<p>javascript中任务队列分为两类：microtask和（marco）task
+* microtask queue：唯一，整个事件循环当中，仅存在一个；执行为同步，同一个事件循环中的microtask会按队列顺序，串行执行完毕；
+* macrotask queue：不唯一，存在一定的优先级（用户I/O部分优先级更高）；异步执行，同一事件循环中，只执行一个。</p>
+
+<h4 id="更完整的事件循环">更完整的事件循环</h4>
+
+<ul>
+<li>每个任务循环，先执行主线程的任务-&gt;执行microtask队列中所有的任务-&gt;从marcotask中取一个任务；
+之后重复上述循环，而在microtask和marcotask之间会进行DOM树渲染，如果能在mircotask中更新完全部数据，那么只需要渲染一次就变更成最新的DOM了；</li>
+<li>属于microtask的任务：ES6的promise，MutationObserver，process.nextTick</li>
+<li>属于marcotask的任务：setTimeout，setInterval，setImmediate，MessageChannel，I/O，UIrending</li>
+</ul>
+
+<h4 id="nexttick实现">nextTick实现</h4>
+
+<p>vue的$nextTick就是根据事件循环机制来实现的：
+1. 浏览器支持Promise优先使用Promise
+2. 其次选择setImmediate，缺点是，setImmediate只有部分高级IE浏览器支持的方法
+3. 再次采用MessageChannel，不需要做超时检测
+4. 最终选择setTimeout，最后才采用setTimeout的方式，是因为setTimeout将回调注册为task之前要不停的进行超时检测，有一定的性能损耗；</p>
+
+<p>回到组件开发上，只需要在nextTick方法中进行swpier的初始化就可以了</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">mounted () {
+    this.$nextTick(function() {
+        if(this.isImgNull()) {
+            const mySwiper1 = new Swiper(&#39;#js_swiper2&#39;, {
+                centeredSlides: true,
+                loop: true,
+                slidesPerView: &#39;auto&#39;,
+                autoplay: {
+                    delay: 2000
+                },
+                pagination: {
+                    el: &#39;.swiper-pagination&#39;
+                }
+            });
+            this.visible = true;
+        }
+    })
+},</pre></div>
+<h2 id="总结">总结</h2>
+
+<p>结合推荐组件的开发，梳理清楚了VUE的渲染机制，以及nextTick的底层实现；在以后开发设计中可以写出更有效率的代码；</p>
+
+      </div>
+
+      <footer>
+        <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <footer class="footer">
+  <section class="container">
+    
+      <p>Enter a text here.</p>
+    
+     © 2019
+    
+       · 
+      Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    
+    
+       · 
+      [<a href="https://github.com/luizdepra/hugo-coder/tree/"></a>]
+    
+  </section>
+</footer>
+
+    </main>
+
+    
+
+  </body>
+
+</html>

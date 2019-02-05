@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zn">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Wang">
+    <meta name="description" content="John Doe&#39;s personal website">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="javascript实现继承的几种方式"/>
+<meta name="twitter:description" content="背景 近期的项目需要兼容IE8，很多ES5、ES6的属性无法使用；其中一部分用到了一些继承的思想，发现自己对js实现继承的几种方式理解还不够透彻，因此花了一晚上的时间，基于《javascript高级程序设计》和《javascript语言精粹》还有ES6的extends方法，重新梳理了所有的继承方式，以及他们的优缺点。
+原型链继承 原型链继承，借助原型链，将父类的属性和方法共享给子类； 实现很简单：子类原型指向父类实例。
+function SuperType(){ this.property = true; } SuperType.prototype.getSuperValue = function(){ return this.property; } function SubType(){ this.subproperty = false; } SubType.prototype = new SuperType(); var instance = new SubType();  instance可以访问到property属性和getSuperValue方法
+缺点  父类中的属性是所有子类实例共享的，如父类中有引用类型，例如数组，那么其中一个子类实例修改了数组元素，会影响到所有的子类实例； 父类的属性是在父类实例化时已经确定，子类实例化时无法向父类够高函数传参；  借用构造函数 为了规避原型链继承的缺点，可以在子类构造函数中，借助父类的构造函数，把this指向子类构造函数
+function SubType(){ SuperType.call(this) }  父类属性会随着构造函数被调用，加在子类的实例上（这样就不会出父类属性共享的问题，因为属性是子类实例自己的属性了）
+new 这里的实现依据是new操作符的行为，当对构造函数执行new操作符时，行为如下(以new SubType()为例)：
+var obj = {}; obj.__proto__ = SubType.prototype; SubType.call(obj); return obj;  缺点 只能继承属性，在原型链上的方法不可见。
+组合继承 将原型链继承与借用构造函数继承组合在一起，既能共享原型链的属性，同时还能避免父类属性共享的问题。
+function SuperType(){ this.property = true; } SuperType."/>
+
+
+    <base href="http://wangfy263.github.io/posts/javascript%E5%AE%9E%E7%8E%B0%E7%BB%A7%E6%89%BF%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/">
+    <title>
+  javascript实现继承的几种方式 · Wang
+</title>
+
+    <link rel="canonical" href="http://wangfy263.github.io/posts/javascript%E5%AE%9E%E7%8E%B0%E7%BB%A7%E6%89%BF%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/">
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700|Merriweather:300,700|Source+Code+Pro:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css" integrity="sha256-oSrCnRYXvHG31SBifqP2PM1uje7SJUyX0nTwO2RJV54=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="http://wangfy263.github.io/css/coder.min.ac37073bc2826cd28ef57364a9fe339de7ebcb26dafc22fd832cb35cf5b1d048.css" integrity="sha256-rDcHO8KCbNKO9XNkqf4znefryyba/CL9gyyzXPWx0Eg=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="http://wangfy263.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="http://wangfy263.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    
+
+    <meta name="generator" content="Hugo 0.54.0" />
+  </head>
+
+  <body class=" ">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="http://wangfy263.github.io/">
+      Wang
+    </a>
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+        
+        
+        
+          
+        
+          
+            
+              <li class="navigation-item menu-separator">
+                <span>|</span>
+              </li>
+              
+            
+            <li class="navigation-item">
+              <a href="http://wangfy263.github.io/zn/">中文</a>
+            </li>
+          
+        
+      
+    </ul>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">javascript实现继承的几种方式</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2018-12-31T09:32:38Z'>
+                December 31, 2018
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              2 minutes read
+            </span>
+          </div>
+          
+          
+        </div>
+      </header>
+
+      <div>
+        
+
+<h2 id="背景">背景</h2>
+
+<p>近期的项目需要兼容IE8，很多ES5、ES6的属性无法使用；其中一部分用到了一些继承的思想，发现自己对js实现继承的几种方式理解还不够透彻，因此花了一晚上的时间，基于《javascript高级程序设计》和《javascript语言精粹》还有ES6的extends方法，重新梳理了所有的继承方式，以及他们的优缺点。</p>
+
+<h2 id="原型链继承">原型链继承</h2>
+
+<p>原型链继承，借助原型链，将父类的属性和方法共享给子类；
+实现很简单：子类原型指向父类实例。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#fff;font-weight:bold">function</span> SuperType(){
+    <span style="color:#fff;font-weight:bold">this</span>.property = <span style="color:#fff;font-weight:bold">true</span>;
+}
+SuperType.prototype.getSuperValue = <span style="color:#fff;font-weight:bold">function</span>(){
+    <span style="color:#fff;font-weight:bold">return</span> <span style="color:#fff;font-weight:bold">this</span>.property;
+}
+<span style="color:#fff;font-weight:bold">function</span> SubType(){
+    <span style="color:#fff;font-weight:bold">this</span>.subproperty = <span style="color:#fff;font-weight:bold">false</span>;
+}
+SubType.prototype = <span style="color:#fff;font-weight:bold">new</span> SuperType();
+<span style="color:#fff;font-weight:bold">var</span> instance = <span style="color:#fff;font-weight:bold">new</span> SubType();
+</code></pre></div>
+<p>instance可以访问到property属性和getSuperValue方法</p>
+
+<h3 id="缺点">缺点</h3>
+
+<ol>
+<li>父类中的属性是所有子类实例共享的，如父类中有引用类型，例如数组，那么其中一个子类实例修改了数组元素，会影响到所有的子类实例；</li>
+<li>父类的属性是在父类实例化时已经确定，子类实例化时无法向父类够高函数传参；</li>
+</ol>
+
+<h2 id="借用构造函数">借用构造函数</h2>
+
+<p>为了规避原型链继承的缺点，可以在子类构造函数中，借助父类的构造函数，把this指向子类构造函数</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#fff;font-weight:bold">function</span> SubType(){
+    SuperType.call(<span style="color:#fff;font-weight:bold">this</span>)
+}
+</code></pre></div>
+<p>父类属性会随着构造函数被调用，加在子类的实例上（这样就不会出父类属性共享的问题，因为属性是子类实例自己的属性了）</p>
+
+<h4 id="new">new</h4>
+
+<p>这里的实现依据是new操作符的行为，当对构造函数执行new操作符时，行为如下(以new SubType()为例)：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#fff;font-weight:bold">var</span> obj = {};
+obj.__proto__ = SubType.prototype;
+SubType.call(obj);
+<span style="color:#fff;font-weight:bold">return</span> obj;
+</code></pre></div>
+<h3 id="缺点-1">缺点</h3>
+
+<p>只能继承属性，在原型链上的方法不可见。</p>
+
+<h2 id="组合继承">组合继承</h2>
+
+<p>将原型链继承与借用构造函数继承组合在一起，既能共享原型链的属性，同时还能避免父类属性共享的问题。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#fff;font-weight:bold">function</span> SuperType(){
+    <span style="color:#fff;font-weight:bold">this</span>.property = <span style="color:#fff;font-weight:bold">true</span>;
+}
+SuperType.prototype.getSuperValue = <span style="color:#fff;font-weight:bold">function</span>(){
+    <span style="color:#fff;font-weight:bold">return</span> <span style="color:#fff;font-weight:bold">this</span>.property;
+}
+<span style="color:#fff;font-weight:bold">function</span> SubType(){
+    SuperType.call(<span style="color:#fff;font-weight:bold">this</span>);
+    <span style="color:#fff;font-weight:bold">this</span>.subproperty = <span style="color:#fff;font-weight:bold">false</span>;
+}
+SubType.prototype = <span style="color:#fff;font-weight:bold">new</span> SuperType();
+SubType.prototype.constructor = SubType;  <span style="color:#007f7f">// 这里需要重置构造器
+</span><span style="color:#007f7f"></span><span style="color:#fff;font-weight:bold">var</span> instance = <span style="color:#fff;font-weight:bold">new</span> SubType();
+</code></pre></div>
+<p>以上代码把前面两种方式组合在一起，需要注意的是，重设子类构造函数的原型对象为父类实例后，子类原型对象丢失了constructor属性，这里必须补上（指向构造函数本身即可），原因是new的过程，需要从constructor中找到构造函数并调用执行；</p>
+
+<h3 id="缺点-2">缺点</h3>
+
+<p>父类构造函数被调用了两次，子类构造函数中调用一次，重置原型对象时又调用了一次。实际上，父类实例中仍然有属性，而子类实例也有同名的属性；父类中的属性实例化是多余的部分；</p>
+
+<h2 id="原型式继承">原型式继承</h2>
+
+<p>本质上与原型链继承是一样的，只是通过类似Object.create()的方法，不需要单独为子类定义构造函数。还有一个优点，可以把对象字面量直接加入到原型链中；</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#fff;font-weight:bold">var</span> superType = {
+    <span style="color:#fff;font-weight:bold">this</span>.property = <span style="color:#fff;font-weight:bold">true</span>;
+}
+<span style="color:#fff;font-weight:bold">var</span> instance = <span style="color:#fff;font-weight:bold">Object</span>.create(superType);
+</code></pre></div>
+<h2 id="object-create">Object.create()</h2>
+
+<p>IE8以上（不包含）可以直接使用，IE8需要自行实现：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#fff;font-weight:bold">function</span> object(obj){
+    <span style="color:#fff;font-weight:bold">function</span> F(){};
+    F.prototype = obj;
+    <span style="color:#fff;font-weight:bold">return</span> <span style="color:#fff;font-weight:bold">new</span> F();
+}
+</code></pre></div>
+<h3 id="缺点-3">缺点</h3>
+
+<p>新对象与原对象保持一致，可以说是原对象的副本，只是对于新对象来说，属性都在原型链上；
+与原型链继承存在的问题基本一样，父类中的引用类型仍然是共享的；</p>
+
+<h2 id="寄生式继承">寄生式继承</h2>
+
+<p>在原型式继承上，做了一点扩展，生成新对象后，对新对象进行增强，再返回新对象；</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#fff;font-weight:bold">function</span> createAnother(original){
+    <span style="color:#fff;font-weight:bold">var</span> clone = object(original);
+    clone.sayHi = <span style="color:#fff;font-weight:bold">function</span>(){
+        alert(<span style="color:#0ff;font-weight:bold">&#34;hi&#34;</span>);
+    }
+    <span style="color:#fff;font-weight:bold">return</span> clone;
+}
+</code></pre></div>
+<h3 id="缺点-4">缺点</h3>
+
+<p>sayHi方法不能复用</p>
+
+<h2 id="寄生组合式继承">寄生组合式继承</h2>
+
+<p>寄生组合式继承，借鉴了寄生式继承的思路，解决了组合继承中父类实例两次实例化属性的问题。
+先上代码：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#fff;font-weight:bold">function</span> object(obj){
+    <span style="color:#fff;font-weight:bold">function</span> F(){};
+    F.prototype = obj;
+    <span style="color:#fff;font-weight:bold">return</span> <span style="color:#fff;font-weight:bold">new</span> F();
+}
+<span style="color:#fff;font-weight:bold">function</span> inheritPrototype(subType, superType){
+    <span style="color:#fff;font-weight:bold">var</span> prototype = object(superType.prototype);  <span style="color:#007f7f">// prototype替代了new SuperType(),__proto__都指向SuperType.prototype,但是不需要实例化SuperType构造函数中的属性；
+</span><span style="color:#007f7f"></span>    prototype.constructor = subType;   <span style="color:#007f7f">// 替换成子类的构造函数，当执行new SubType()时，运行的是SubType的构造函数；
+</span><span style="color:#007f7f"></span>    subType.prototype = prototype;
+}
+<span style="color:#fff;font-weight:bold">function</span> SuperType(){
+    <span style="color:#fff;font-weight:bold">this</span>.property = <span style="color:#fff;font-weight:bold">true</span>;
+}
+SuperType.prototype.getSuperValue = <span style="color:#fff;font-weight:bold">function</span>(){
+    <span style="color:#fff;font-weight:bold">return</span> <span style="color:#fff;font-weight:bold">this</span>.property;
+}
+<span style="color:#fff;font-weight:bold">function</span> SubType(){
+    SuperType.call(<span style="color:#fff;font-weight:bold">this</span>);
+    <span style="color:#fff;font-weight:bold">this</span>.subproperty = <span style="color:#fff;font-weight:bold">false</span>;
+}
+inheritPrototype(SubType, SuperType);
+<span style="color:#fff;font-weight:bold">var</span> instance = <span style="color:#fff;font-weight:bold">new</span> SubType();
+</code></pre></div>
+<p>寄生组合方式，通过使用一个新对象，替换掉原先组合继承方式中，父类的实例，达到原型链不变，但是不需要实例化父类属性.
+原型链如下:
+组合继承：   子类实例 &mdash; 父类实例  &mdash;  父类原型；
+寄生组合：   子类实例 &mdash; 新对象    &mdash;  父类原型；</p>
+
+<p>完美解决了两次实例化父类属性的问题；</p>
+
+<h3 id="缺点-5">缺点</h3>
+
+<p>唯一的缺点就是实现相对复杂，IE8以上可以通过Object.create()简化部分流程</p>
+
+      </div>
+
+      <footer>
+        <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <footer class="footer">
+  <section class="container">
+    
+      <p>Enter a text here.</p>
+    
+     © 2019
+    
+       · 
+      Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    
+    
+       · 
+      [<a href="https://github.com/luizdepra/hugo-coder/tree/"></a>]
+    
+  </section>
+</footer>
+
+    </main>
+
+    
+
+  </body>
+
+</html>

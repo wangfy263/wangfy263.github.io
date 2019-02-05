@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zn">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Wang">
+    <meta name="description" content="John Doe&#39;s personal website">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="fis发布过程给文件增加md5戳导致文件加载404异常问题分析解决"/>
+<meta name="twitter:description" content="背景 昨晚与shenjb讨论fis发布过程中，增加为资源文件增加md5戳的配置后，生成的文件与编辑过程中引用的位置所加的md5戳不相同，导致访问时，文件找不到；
+现象 当引入的js中使用模板引擎tpl时，就会出现md5戳不一致的情况，当js中不依赖tpl模板时，则不会出现这种现象
+分析 拿到简易版工程运行，出现md5戳不一致的问题：如下图 可以看到经过编译后生成的login.js的md5戳，与html中引用的不一致；
+fis的relase过程是先进行单文件编译，然后打包，最后生成文件；
+找到fis的源码，在relase命令的入口，找到增加md5戳的位置： release命令的入口在fis\node_modules\fis-kernel\lib\release.js文件中
+var res = ret.map.res[id] = { uri : file.getUrl(opt.hash, opt.domain), type : file.rExt.replace(/^\./, &#39;&#39;) }; 上面的代码中file.getUrl方法中会给当前文件增加md5戳，实际调用方法是file.getHash(),位于fis\node_modules\fis-kernel\lib\file.js中：
+getHash : function(){ if(typeof this._md5 === &#39;undefined&#39;){ Object.defineProperty(this, &#39;_md5&#39;, { value : fis.util.md5(this.getContent()), writable : true }); } return this._md5; }, 这个方法根据文件的内容生成唯一的md5戳，内容有变化则md5戳也不同；
+那么我们就把文件内容和md5戳都打印出来：
+if (file.id === &#34;portal-op-web-view/apps/serviceapps/login/js/login.js&#34;) { console.log(&#34;=============================&#34;) console.log(file._content) console.log(file.getHash()) console.log(&#34;=============================&#34;) } var res = ret.map.res[id] = { uri : file.getUrl(opt.hash, opt.domain), type : file."/>
+
+
+    <base href="http://wangfy263.github.io/posts/fis%E5%8F%91%E5%B8%83%E8%BF%87%E7%A8%8B%E7%BB%99%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0md5%E6%88%B3%E5%AF%BC%E8%87%B4%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD404%E5%BC%82%E5%B8%B8%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90%E8%A7%A3%E5%86%B3/">
+    <title>
+  fis发布过程给文件增加md5戳导致文件加载404异常问题分析解决 · Wang
+</title>
+
+    <link rel="canonical" href="http://wangfy263.github.io/posts/fis%E5%8F%91%E5%B8%83%E8%BF%87%E7%A8%8B%E7%BB%99%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0md5%E6%88%B3%E5%AF%BC%E8%87%B4%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD404%E5%BC%82%E5%B8%B8%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90%E8%A7%A3%E5%86%B3/">
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700|Merriweather:300,700|Source+Code+Pro:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css" integrity="sha256-oSrCnRYXvHG31SBifqP2PM1uje7SJUyX0nTwO2RJV54=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="http://wangfy263.github.io/css/coder.min.ac37073bc2826cd28ef57364a9fe339de7ebcb26dafc22fd832cb35cf5b1d048.css" integrity="sha256-rDcHO8KCbNKO9XNkqf4znefryyba/CL9gyyzXPWx0Eg=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="http://wangfy263.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="http://wangfy263.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    
+
+    <meta name="generator" content="Hugo 0.54.0" />
+  </head>
+
+  <body class=" ">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="http://wangfy263.github.io/">
+      Wang
+    </a>
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+        
+        
+        
+          
+        
+          
+            
+              <li class="navigation-item menu-separator">
+                <span>|</span>
+              </li>
+              
+            
+            <li class="navigation-item">
+              <a href="http://wangfy263.github.io/zn/">中文</a>
+            </li>
+          
+        
+      
+    </ul>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">fis发布过程给文件增加md5戳导致文件加载404异常问题分析解决</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2018-08-10T15:32:11Z'>
+                August 10, 2018
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              3 minutes read
+            </span>
+          </div>
+          
+          
+        </div>
+      </header>
+
+      <div>
+        
+
+<h2 id="背景">背景</h2>
+
+<p>昨晚与shenjb讨论fis发布过程中，增加为资源文件增加md5戳的配置后，生成的文件与编辑过程中引用的位置所加的md5戳不相同，导致访问时，文件找不到；</p>
+
+<h2 id="现象">现象</h2>
+
+<p>当引入的js中使用模板引擎tpl时，就会出现md5戳不一致的情况，当js中不依赖tpl模板时，则不会出现这种现象</p>
+
+<h2 id="分析">分析</h2>
+
+<p>拿到简易版工程运行，出现md5戳不一致的问题：如下图
+<img src="md5戳不一致.jpg" alt="md5戳不一致" />
+可以看到经过编译后生成的login.js的md5戳，与html中引用的不一致；</p>
+
+<p>fis的relase过程是先进行单文件编译，然后打包，最后生成文件；</p>
+
+<p>找到fis的源码，在relase命令的入口，找到增加md5戳的位置：
+release命令的入口在fis\node_modules\fis-kernel\lib\release.js文件中</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">var res = ret.map.res[id] = {
+    uri  : file.getUrl(opt.hash, opt.domain),
+    type : file.rExt.replace(/^\./, &#39;&#39;)
+};</pre></div>
+<p>上面的代码中file.getUrl方法中会给当前文件增加md5戳，实际调用方法是file.getHash(),位于fis\node_modules\fis-kernel\lib\file.js中：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">getHash : function(){
+    if(typeof this._md5 === &#39;undefined&#39;){
+        Object.defineProperty(this, &#39;_md5&#39;, {
+            value : fis.util.md5(this.getContent()),
+            writable : true
+        });
+    }
+    return this._md5;
+},</pre></div>
+<p>这个方法根据文件的内容生成唯一的md5戳，内容有变化则md5戳也不同；</p>
+
+<p>那么我们就把文件内容和md5戳都打印出来：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">if (file.id === &#34;portal-op-web-view/apps/serviceapps/login/js/login.js&#34;) {
+    console.log(&#34;=============================&#34;)
+    console.log(file._content)
+    console.log(file.getHash())
+    console.log(&#34;=============================&#34;)
+}
+var res = ret.map.res[id] = {
+    uri  : file.getUrl(opt.hash, opt.domain),
+    type : file.rExt.replace(/^\./, &#39;&#39;)
+};</pre></div>
+<p>打印结果：
+<img src="编译前.jpg" alt="编译前" /></p>
+
+<p>然后找到生成文件的代码位于fis\node_modules\fis-command-release\lib\deploy.js
+在prepareDeploy方法中找到：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">if (file.useHash &amp;&amp; dest.opt.md5 &gt; 0) {
+    release = file.getHashRelease(release);
+}</pre></div>
+<p>在getHashRelease方法中调用了getHash()来生成md5戳</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">function addHash(path, file){
+    var rExt  = file.rExt,
+        qRExt = fis.util.escapeReg(rExt),
+        qExt = fis.util.escapeReg(file.ext),
+        hash = file.getHash(),
+        onnector = fis.config.get(&#39;project.md5Connector&#39;, &#39;_&#39;),
+        reg = new RegExp(qRExt + &#39;$|&#39; + qExt + &#39;$&#39;, &#39;i&#39;);
+    return path.replace(reg, &#39;&#39;) + onnector + hash + rExt;
+}</pre></div>
+<p>接着在deploy中打印出md5值
+<img src="编译后.jpg" alt="编译后" /></p>
+
+<p>可以看到，编译前的md5戳就是第一张图中，html引用的路径中出现的md5戳，而编译后的md5戳则是实际生成的文件所带有的md5戳</p>
+
+<p>在上面两张图中还同时标出了，文件内容变化的部分，也就是引用tpl模板的位置；</p>
+
+<h2 id="提出假设">提出假设</h2>
+
+<p>结合上述分析，我们可以提出一个相对靠谱的假设：
+由于js中依赖了tpl模板，在编译过程中，tpl被编译成js文件，并且在require中变为了绝对路径，这个变化导致login.js文件内容与之前不同，而生成文件的过程中，又根据文件内容再次获取md5加密值，所以二者不同；</p>
+
+<p>但是，在之前的使用中，也常常使用tpl模板，为什么没有出现这个的问题？</p>
+
+<p>比对之前的工程发现：
+原来的使用方式是：在html中通过require的方式引入js
+这次出问题的方式是：直接在html中通过script标签引入依赖了tpl的js文件
+<img src="require引入方式.jpg" alt="require引入方式" /></p>
+
+<p>可以看到，改成require引入后，md5戳变一直了</p>
+
+<h2 id="验证假设">验证假设</h2>
+
+<p>可以明确，出问题的地方在tpl模板的编译过程，tpl模板编译在插件fis-postpackager-requiretpl中</p>
+
+<p>插件的逻辑是：在postpackager阶段（打包完成后）执行，循环所有经过编译的文件，当文件是html文件或是js文件时，执行parseFileD方法</p>
+
+<p>下面就是parseFileD方法的代码</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">    function parseFileD(file, ret, f) {
+        var content = file.getContent();
+        var reg = /define\(([\&#34;|\&#39;]\w*[\&#34;|\&#39;],)?(\[[^\[]*\])/g;
+        content = content.replace(reg, function(m, m1, m2) {
+            m1 = m1 ? m1 : &#34;&#34;;
+            var m2 = eval(&#39;(&#39; + m2 + &#39;)&#39;);
+            for (var k = 0; k &lt; m2.length; k++) {
+                if (m2[0] == &#34;template&#34; || m2[k].indexOf(&#34;tpl&#34;) &gt; -1) {;
+                    m2[k] = getHashPath(ret, m2[k], file, f);
+                }
+            }
+            return &#34;define(&#34; + m1 + JSON.stringify(m2);
+        });
+        var reg = /require\((\[[^\[]*?\])/g;
+        content = content.replace(reg, function(m, m1) {
+            var m1 = eval(&#39;(&#39; + m1 + &#39;)&#39;);
+            for (var k = 0; k &lt; m1.length; k++) {
+                // if(m1[k].indexOf(&#34;tpl&#34;)&gt;-1){
+                m1[k] = getHashPath(ret, m1[k], file, f);
+                // }
+            }
+            return &#34;require(&#34; + JSON.stringify(m1);
+        });
+        var reg = /require\([&#34;|&#39;](.*?)[&#34;|&#39;]\)/g;
+        content = content.replace(reg, function(m, m1) {
+            m1 = getHashPath(ret, m1, file, f);
+            return m1 = &#34;require(&#39;&#34; + m1 + &#34;&#39;)&#34;;
+        });
+
+        if (file.getContent() != content) {
+            file._md5 = undefined;
+        }
+        file.setContent(content);
+        return content;
+    }</pre></div>
+<p>可以看到，parseFileD方法中有三个正则表达式，分别匹配define引入语句和require引入语句，require引入语句分为两种，引入单个文件或是多个文件</p>
+
+<p>当在文件内容中匹配到以上三个表达式时：
+1. 会根据引入路径，找到文件；
+2. 并根据当前的文件内容生成md5戳;
+3. 然后把md5戳加在引入路径的后面；
+4. 替换会文件内容中</p>
+
+<p>因此，当使用require引入js时，即使js文件内容因为tpl的原因，有所变换，这里会根据变化后的内容生成新的md5戳，并保存到相应的引入位置；</p>
+
+<p>而通过script标签引入的文件，在这里并没有处理，所以script标签引入的js文件md5戳，依然是变化前的；所以出现引入位置和实际文件的md5戳不同的问题；</p>
+
+<h2 id="解决方案">解决方案</h2>
+
+<p>知道了具体原因很容易就能想到解决方案：
+这要在fis-recommand-requiretpl的逻辑中，对script标签引入的js也进行正则匹配，修改成新的md5戳就好了</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">var reg = /script(.*?)src=[&#34;|&#39;](.*?)[_](.*?)[&#34;|&#39;]/g
+content = content.replace(reg, function (m, m1, m2, m3) {
+    m2 = getHashPath(ret, m2, file, f);
+    return &#34;script&#34; + m1 + &#34;src=&#39;&#34; + m2 + &#34;&#39;&#34;;
+});</pre></div>
+<p>这里存在两个问题：
+1、按照插件的逻辑，所有的html、js文件都会进行正则匹配，实际上js文件没有并不需要进行script标签的匹配；
+2、当html中引入的其他文件名中含有同样的连接符时(下划线)，会被错误匹配处理；</p>
+
+<p>为了解决这两个问题，把匹配script标签的逻辑单独抽离为独立的方法，并且只对html文件进行匹配，同时，当不需要md5戳时，也不需要进行匹配</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">if (file.isHtmlLike &amp;&amp; opt.md5 === 1) { // html类文件，并且配置中存在md5戳时对script标签进行处理
+    parseFileHtmlScript(file, ret,file)
+}</pre></div>
+<p>parseFileHtmlScript方法中，对匹配内容进行二次处理，当文件名中存在与fis默认的连接符相同的字符时，找到最后一个连接符进行处理，避免影响到公共文件的引入</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">function parseFileHtmlScript(file, ret, f) {
+    var content = file.getContent();
+    var md5Connector = fis.config.get(&#39;project.md5Connector&#39;, &#39;_&#39;)
+    var reg = new RegExp(&#34;script(.*?)src=[\&#34;|\&#39;](.*?)[&#34;+ md5Connector +&#34;](.*?)[\&#34;|\&#39;]&#34;, &#39;g&#39;)
+    content = content.replace(reg, function (m, m1, m2, m3) {
+        if (m3.indexOf(md5Connector) &gt; -1) {
+            var index = m3.lastIndexOf(md5Connector)
+            m2 =  m2 + md5Connector + m3.substring(0,index)
+        }
+        var contextPath = fis.config.get(&#39;context_path&#39;)
+        if (opt.domain &amp;&amp; m2.startsWith(contextPath)) {
+           m2 = m2.substring(contextPath.length)
+        }
+        var info = fis.uri(m2 + &#39;.js&#39;, file.dirname);
+        if (info.file){
+            m2 = getHashPath(ret, m2, file, f);
+            return &#34;script&#34; + m1 + &#34;src=&#39;&#34; + m2 + &#34;&#39;&#34;;
+        }
+        return m
+    });
+    if (file.getContent() != content) {
+        file._md5 = undefined;
+    }
+    file.setContent(content);
+    return content;
+}</pre></div>
+<p>运行结果：
+<img src="修正后.jpg" alt="修正后" /></p>
+
+      </div>
+
+      <footer>
+        <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <footer class="footer">
+  <section class="container">
+    
+      <p>Enter a text here.</p>
+    
+     © 2019
+    
+       · 
+      Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    
+    
+       · 
+      [<a href="https://github.com/luizdepra/hugo-coder/tree/"></a>]
+    
+  </section>
+</footer>
+
+    </main>
+
+    
+
+  </body>
+
+</html>

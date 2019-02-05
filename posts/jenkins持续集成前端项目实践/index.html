@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zn">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Wang">
+    <meta name="description" content="John Doe&#39;s personal website">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="jenkins&#43;Gitlab持续集成前端项目实践"/>
+<meta name="twitter:description" content="安装插件 由于相关项目在gitLab上管理因此需要安装相关插件： Git plugin
+GitLab Plugin Publish Over FTP NodeJS Plugin
+部署jenkins的机器如果有网络可通过jenkins管理界面直接安装： 全局配置 git配置 在系统管理&ndash;全局工具配置界面，配置git环境变量 Path to Git executable这里会从环境变量的配置中找git，找不到会提示： 填写完整路径也可以识别，但是在执行打包命令时会出现问题；
+FTP配置 在系统管理&ndash;全局工具配置界面，配置FTP信息，配置用于构建完成后执行FTP操作的主机； 邮件配置 配置邮件通知，当构建失败后，通知项目相关人员 nodejs配置 执行构建的命令需要借助nodejs 配置一个构建流程 新建任务选择，构建一个自由风格的软件项目 源码管理 源码管理采用Git 构建环境 构建 部署jenkins的机器是windows系统，因此这里选择执行windows批处理命令； 构建后操作 构建后操作有两步
+收件人配置 FTP任务 配置完成，现在我在执行上线操作，只需要登录jenkins的选择指定的项目，执行构建即可，构建过程也可以在页面中看到； 来看看jenkins替代了多少操作： 1、从git上develop分支下载最新的代码； 2、执行构建操作，实际上就是执行npm run build 3、FTP到指定主机的指定目录；
+实际上，jenkins可以做的更多；集成gitlab的插件，在gitlab中配置webhook后，回调jenkins执行持续集成，那么只要在指定分支上执行push操作后，就会自动执行持续集成操作；
+山西现场由于网络原因，jenkins和gitlab部署的主机网络不通，gitLab回调无法请求到jenkins，只能作罢；
+部署集成环境遇到的坑： 1、git要配置环境变量，否则执行构建时会提示找不到命令； 2、首次配置需要在jenkins下载的项目中，先执行npm install，安装好相关模块； 3、需要在jenkins中安装nodejs插件，否则即使主机上安装有nodejs和npm也无法执行npm命令"/>
+
+
+    <base href="http://wangfy263.github.io/posts/jenkins%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/">
+    <title>
+  jenkins&#43;Gitlab持续集成前端项目实践 · Wang
+</title>
+
+    <link rel="canonical" href="http://wangfy263.github.io/posts/jenkins%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/">
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700|Merriweather:300,700|Source+Code+Pro:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css" integrity="sha256-oSrCnRYXvHG31SBifqP2PM1uje7SJUyX0nTwO2RJV54=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="http://wangfy263.github.io/css/coder.min.ac37073bc2826cd28ef57364a9fe339de7ebcb26dafc22fd832cb35cf5b1d048.css" integrity="sha256-rDcHO8KCbNKO9XNkqf4znefryyba/CL9gyyzXPWx0Eg=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="http://wangfy263.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="http://wangfy263.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    
+
+    <meta name="generator" content="Hugo 0.54.0" />
+  </head>
+
+  <body class=" ">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="http://wangfy263.github.io/">
+      Wang
+    </a>
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+        
+        
+        
+          
+        
+          
+            
+              <li class="navigation-item menu-separator">
+                <span>|</span>
+              </li>
+              
+            
+            <li class="navigation-item">
+              <a href="http://wangfy263.github.io/zn/">中文</a>
+            </li>
+          
+        
+      
+    </ul>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">jenkins&#43;Gitlab持续集成前端项目实践</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2018-06-21T08:56:48Z'>
+                June 21, 2018
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              One minute read
+            </span>
+          </div>
+          
+          
+        </div>
+      </header>
+
+      <div>
+        
+
+<h2 id="安装插件">安装插件</h2>
+
+<p>由于相关项目在gitLab上管理因此需要安装相关插件：
+Git plugin<br />
+GitLab Plugin
+Publish Over FTP
+NodeJS Plugin</p>
+
+<p>部署jenkins的机器如果有网络可通过jenkins管理界面直接安装：
+<img src="jenkins插件.jpg" alt="Jenkins配置" /></p>
+
+<h2 id="全局配置">全局配置</h2>
+
+<h4 id="git配置">git配置</h4>
+
+<p>在系统管理&ndash;全局工具配置界面，配置git环境变量
+<img src="git配置.jpg" alt="git配置" /></p>
+
+<p>Path to Git executable这里会从环境变量的配置中找git，找不到会提示：
+<img src="git配置异常.jpg" alt="git配置" /></p>
+
+<p>填写完整路径也可以识别，但是在执行打包命令时会出现问题；</p>
+
+<h4 id="ftp配置">FTP配置</h4>
+
+<p>在系统管理&ndash;全局工具配置界面，配置FTP信息，配置用于构建完成后执行FTP操作的主机；
+<img src="FTP配置.jpg" alt="FTP配置" /></p>
+
+<h4 id="邮件配置">邮件配置</h4>
+
+<p>配置邮件通知，当构建失败后，通知项目相关人员
+<img src="邮件配置.jpg" alt="邮件配置" /></p>
+
+<h4 id="nodejs配置">nodejs配置</h4>
+
+<p>执行构建的命令需要借助nodejs
+<img src="nodejs配置.jpg" alt="nodejs配置" /></p>
+
+<h2 id="配置一个构建流程">配置一个构建流程</h2>
+
+<p>新建任务选择，构建一个自由风格的软件项目
+<img src="新建任务.jpg" alt="新建任务" /></p>
+
+<h4 id="源码管理">源码管理</h4>
+
+<p>源码管理采用Git
+<img src="源码管理.jpg" alt="源码管理" /></p>
+
+<h4 id="构建环境">构建环境</h4>
+
+<p><img src="构建环境.jpg" alt="构建环境" /></p>
+
+<h4 id="构建">构建</h4>
+
+<p>部署jenkins的机器是windows系统，因此这里选择执行windows批处理命令；
+<img src="构建.jpg" alt="构建" /></p>
+
+<h4 id="构建后操作">构建后操作</h4>
+
+<p>构建后操作有两步</p>
+
+<h5 id="收件人配置">收件人配置</h5>
+
+<p><img src="邮件提醒.jpg" alt="邮件提醒" /></p>
+
+<h5 id="ftp任务">FTP任务</h5>
+
+<p><img src="FTP任务配置.jpg" alt="FTP任务配置" /></p>
+
+<p>配置完成，现在我在执行上线操作，只需要登录jenkins的选择指定的项目，执行构建即可，构建过程也可以在页面中看到；
+<img src="界面化操作.jpg" alt="界面化操作" />
+<img src="构建日志.jpg" alt="构建日志" /></p>
+
+<p>来看看jenkins替代了多少操作：
+1、从git上develop分支下载最新的代码；
+2、执行构建操作，实际上就是执行npm run build
+3、FTP到指定主机的指定目录；</p>
+
+<p>实际上，jenkins可以做的更多；集成gitlab的插件，在gitlab中配置webhook后，回调jenkins执行持续集成，那么只要在指定分支上执行push操作后，就会自动执行持续集成操作；</p>
+
+<p>山西现场由于网络原因，jenkins和gitlab部署的主机网络不通，gitLab回调无法请求到jenkins，只能作罢；</p>
+
+<h5 id="部署集成环境遇到的坑">部署集成环境遇到的坑：</h5>
+
+<p>1、git要配置环境变量，否则执行构建时会提示找不到命令；
+2、首次配置需要在jenkins下载的项目中，先执行npm install，安装好相关模块；
+3、需要在jenkins中安装nodejs插件，否则即使主机上安装有nodejs和npm也无法执行npm命令</p>
+
+      </div>
+
+      <footer>
+        <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <footer class="footer">
+  <section class="container">
+    
+      <p>Enter a text here.</p>
+    
+     © 2019
+    
+       · 
+      Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    
+    
+       · 
+      [<a href="https://github.com/luizdepra/hugo-coder/tree/"></a>]
+    
+  </section>
+</footer>
+
+    </main>
+
+    
+
+  </body>
+
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zn">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Wang">
+    <meta name="description" content="John Doe&#39;s personal website">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="gitflow工作流程使用经验"/>
+<meta name="twitter:description" content="背景： 公司一直使用svn做版本管控，项目一般只有两个分支，开发区和发布区，开发人员在开发过程中提交代码，然后在测试部署环境，测试通过后将代码同步至发布区，从发布区打包上线到生产环境；
+前端项目现在多采用MVVM架构，每次上线需要全量打包，再加上多人协作的场景下，svn的管控模式已经难以满足复杂的场景；
+先分析下问题所在： 1、开发人员多，每个人都在发布区提交代码，发布区的代码经常出现一更新就无法运行，只能先一一排错；同时测试环境沦为鸡肋，因为没有对应的稳定版本； 2、并行开发的版本多，同时有3个以上的需求在开发，但上线的时间并不一致，导致开发区的代码无法作为测试版本，只能由开发人员自己提交发布区，测试人员在发布区打包上线并测试；发布区沦为测试区； 3、前端项目无法增量上线，每次上线需要发布人全量打包，发布区版本由发布人员认为管控，上线日需要多次打包测试；
+因此考虑引入Git作为版本管理工具，对开发上线流程进行管理；
+Git的优点  由于是分布式，所有本地库包含了远程库的所有内容。 优秀的分支模型，打分支以及合并分支，极其方便。 快速，Git由于代码都在本地，打分支和合并分支及其快速  但即使是Git，没有一套规范约束，随着项目周期变长，参与人员变多，依旧会出现各种问题；
+Gitflow 就像代码需要代码规范一样，代码管理同样需要一个清晰的流程和规范
+Gitflow工作流通过为功能开发, 发布准备和维护分配独立的分支, 让发布迭代过程更流畅. 严格的分支模型也为大型项目提供了一些非常必要的结构.
+Gitflow工作流没有用超出功能分支工作流的概念和命令, 而是为不同的分支分配一个很明确的角色, 并定义分支之间如何和什么时候进行交互. 主要分支:  Master(绿色): 主分支，保持稳定，不允许直接提交代码，只能从release分支和hotfix分支发起merge请求 Develop(橙色): 开发分支，相对稳定，代码优化以及功能性开发；  辅助分支:  Feature(蓝色): 开发新功能都从 develop 分支新建出来，完成后合并（merge）回 develop分支； Release(黄色): 准备要 release 的版本，只修改 bug。从 develop 分支出来，完成后 merge 回 master 和 develop Hotfix(灰色): 修复bug分支，等不及 release 版本就必须马上修复 master 赶上线的情况。会从 master 分支出来，完成后 merge 回 master 和 develop  在实际使用中，根据现场的情况，做了一些调整： 1. master分支，有版本管理人员负责，每次上线需要对master分支打版本tag；master需要时刻和生产环境保持一致，合并master分支由1-2个管理员负责，开发人员不可以直接提交到master分支； 2. develop分支，与测试环境保持一致；不在develop分支直接开发，尽可能以功能分支合并的形式更新develop分支，保证develop分支可用性；后期将加入持续集成，develop分支的稳定是持续集成的前提条件； 3."/>
+
+
+    <base href="http://wangfy263.github.io/posts/gitflow%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C/">
+    <title>
+  gitflow工作流程使用经验 · Wang
+</title>
+
+    <link rel="canonical" href="http://wangfy263.github.io/posts/gitflow%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C/">
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700|Merriweather:300,700|Source+Code+Pro:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css" integrity="sha256-oSrCnRYXvHG31SBifqP2PM1uje7SJUyX0nTwO2RJV54=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="http://wangfy263.github.io/css/coder.min.ac37073bc2826cd28ef57364a9fe339de7ebcb26dafc22fd832cb35cf5b1d048.css" integrity="sha256-rDcHO8KCbNKO9XNkqf4znefryyba/CL9gyyzXPWx0Eg=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="http://wangfy263.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="http://wangfy263.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    
+
+    <meta name="generator" content="Hugo 0.54.0" />
+  </head>
+
+  <body class=" ">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="http://wangfy263.github.io/">
+      Wang
+    </a>
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+        
+        
+        
+          
+        
+          
+            
+              <li class="navigation-item menu-separator">
+                <span>|</span>
+              </li>
+              
+            
+            <li class="navigation-item">
+              <a href="http://wangfy263.github.io/zn/">中文</a>
+            </li>
+          
+        
+      
+    </ul>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">gitflow工作流程使用经验</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2018-05-15T21:13:21Z'>
+                May 15, 2018
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              One minute read
+            </span>
+          </div>
+          
+          
+        </div>
+      </header>
+
+      <div>
+        
+
+<h2 id="背景">背景：</h2>
+
+<p>公司一直使用svn做版本管控，项目一般只有两个分支，开发区和发布区，开发人员在开发过程中提交代码，然后在测试部署环境，测试通过后将代码同步至发布区，从发布区打包上线到生产环境；</p>
+
+<p>前端项目现在多采用MVVM架构，每次上线需要全量打包，再加上多人协作的场景下，svn的管控模式已经难以满足复杂的场景；</p>
+
+<h2 id="先分析下问题所在">先分析下问题所在：</h2>
+
+<p>1、开发人员多，每个人都在发布区提交代码，发布区的代码经常出现一更新就无法运行，只能先一一排错；同时测试环境沦为鸡肋，因为没有对应的稳定版本；
+2、并行开发的版本多，同时有3个以上的需求在开发，但上线的时间并不一致，导致开发区的代码无法作为测试版本，只能由开发人员自己提交发布区，测试人员在发布区打包上线并测试；发布区沦为测试区；
+3、前端项目无法增量上线，每次上线需要发布人全量打包，发布区版本由发布人员认为管控，上线日需要多次打包测试；</p>
+
+<p>因此考虑引入Git作为版本管理工具，对开发上线流程进行管理；</p>
+
+<h2 id="git的优点">Git的优点</h2>
+
+<ol>
+<li>由于是分布式，所有本地库包含了远程库的所有内容。</li>
+<li>优秀的分支模型，打分支以及合并分支，极其方便。</li>
+<li>快速，Git由于代码都在本地，打分支和合并分支及其快速</li>
+</ol>
+
+<p>但即使是Git，没有一套规范约束，随着项目周期变长，参与人员变多，依旧会出现各种问题；</p>
+
+<h2 id="gitflow">Gitflow</h2>
+
+<p>就像代码需要代码规范一样，代码管理同样需要一个清晰的流程和规范</p>
+
+<p>Gitflow工作流通过为功能开发, 发布准备和维护分配独立的分支, 让发布迭代过程更流畅. 严格的分支模型也为大型项目提供了一些非常必要的结构.</p>
+
+<p>Gitflow工作流没有用超出功能分支工作流的概念和命令, 而是为不同的分支分配一个很明确的角色, 并定义分支之间如何和什么时候进行交互.
+<img src="gitflow工作流程使用经验/gitflow.png" alt="avatar" /></p>
+
+<h4 id="主要分支">主要分支:</h4>
+
+<ul>
+<li>Master(绿色): 主分支，保持稳定，不允许直接提交代码，只能从release分支和hotfix分支发起merge请求</li>
+<li>Develop(橙色): 开发分支，相对稳定，代码优化以及功能性开发；</li>
+</ul>
+
+<h4 id="辅助分支">辅助分支:</h4>
+
+<ul>
+<li>Feature(蓝色): 开发新功能都从 develop 分支新建出来，完成后合并（merge）回 develop分支；</li>
+<li>Release(黄色): 准备要 release 的版本，只修改 bug。从 develop 分支出来，完成后 merge 回 master 和 develop</li>
+<li>Hotfix(灰色): 修复bug分支，等不及 release 版本就必须马上修复 master 赶上线的情况。会从 master 分支出来，完成后 merge 回 master 和 develop</li>
+</ul>
+
+<p>在实际使用中，根据现场的情况，做了一些调整：
+1. master分支，有版本管理人员负责，每次上线需要对master分支打版本tag；master需要时刻和生产环境保持一致，合并master分支由1-2个管理员负责，开发人员不可以直接提交到master分支；
+2. develop分支，与测试环境保持一致；不在develop分支直接开发，尽可能以功能分支合并的形式更新develop分支，保证develop分支可用性；后期将加入持续集成，develop分支的稳定是持续集成的前提条件；
+3. feature分支，是开发人员主要开发的分支，建议按照功能点来新建分支，每个功能是一个分支，开发人员自测要在feature分支完成，自测通过后，在上线周期内merge到develop分支，提交由测试人员测试；
+4. 测试人员在测试环境测试出bug，指定开发人员需要基于develop新建release分支，开发人员在release分支修复bug，而后merge回develop分支，测试人员再进行测试；
+5. 测试人员测试通过后，将release分支merge到master分支，进行上线发布；
+6. 上线后，再次出现bug，需要开发人员在master分支基础上，新建hotfix分支，修复bug，修复后，merge到develop分支测试，测试通过后再merge到master分支，重新上线发布；
+7. 如果上线失败（出现未能解决的bug，或者因为用户层面的原因）发布人员从master分支回退到上一个tag版本，然后执行上线回退；
+8. release分支和hotfix分支在bug修复后要删除，下次修复新bug时再新建分支，修复bug需要在最新的分支版本上进行；</p>
+
+<p><img src="gitBranch.jpg" alt="分支列表" /></p>
+
+<p>上图是我的分支列表，由于正在开发世界杯的相关功能，因此当前处在世界杯功能分支（feature/worldCup）,红色的部分是远程分支，可以看到feature分支有4个，对应的是正在开发的4个功能；</p>
+
+<h5 id="gitflow一些常用命令汇总">gitFlow一些常用命令汇总</h5>
+
+<ol>
+<li>远程代码拉取到本地：
+<code>bash
+git clone xxx
+git checkout -b develop origin/develop
+</code></li>
+<li>新建feature分支，命名方式以feature/功能名
+<code>bash
+git checkout -b [branch-name]
+/* 新建分支只是在本地，需要把分支提交到远程服务器 */
+git push origin [branch-name]:[branch-name] 
+</code></li>
+<li>开发人员提交代码到feature分支
+<code>bash
+git add *
+git commit -m '备注'
+</code></li>
+<li>feature分支开发完成后，将本地的代码变更提交到远程
+<code>bash
+/* 执行代码拉取操作，防止代码冲突 */
+git pull -rebase
+/* 解决代码冲突后，推送代码到远程仓库*/
+git push origin [branch-name] 
+</code></li>
+<li>本地自测过之后，合并feature分支到develop分支
+<code>bash
+git checkout develop
+git merge [branch-name]
+</code></li>
+<li>合并完成后，删除对应的feature分支
+<code>bash
+/* 删除本地分支 */
+git branch -d [branch-name]  
+/* 删除远程分支 */
+git push origin --delete [branch-name]  
+</code></li>
+<li>打tag
+<code>bash
+/* 创建Tag */
+git tag -m &quot;Task#003 v1.0.0 首版发布&quot; v1.0.0.170718
+/* 推送Tag到远程仓库 */
+git push origin v1.0.0.170718
+</code></li>
+</ol>
+
+<h2 id="git工具推荐">Git工具推荐</h2>
+
+<p>git Bash：  window下用适用于git的命令行工具，建议熟悉git还是从命令行开始；
+<img src="gitBash.jpg" alt="git Bash" />
+sourceTree：拥有可视化界面的项目版本控制软件，适用于git项目管理，可以一目了然的看到分支合并的情况，同时可以看到每次提交时的文件列表的修改情况
+<img src="sourceTree.jpg" alt="sourceTree" /></p>
+
+      </div>
+
+      <footer>
+        <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <footer class="footer">
+  <section class="container">
+    
+      <p>Enter a text here.</p>
+    
+     © 2019
+    
+       · 
+      Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    
+    
+       · 
+      [<a href="https://github.com/luizdepra/hugo-coder/tree/"></a>]
+    
+  </section>
+</footer>
+
+    </main>
+
+    
+
+  </body>
+
+</html>

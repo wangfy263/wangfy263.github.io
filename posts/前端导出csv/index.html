@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zn">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Wang">
+    <meta name="description" content="John Doe&#39;s personal website">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="前端实现表格数据导出功能"/>
+<meta name="twitter:description" content="将表格数据导出为文档是常见的功能需求，通常是借助后端来实现这个功能；
+现在前端也可以直接导出文档了，CSV格式的文档；
+CSV格式 CSV是comma separated values的缩写，是常用的数据文档格式之一，可以用excel文档等表格处理软件打开修改，但本质上是一个纯文本文件，格式相当简单：每一行数据为行，每一列数据由分隔符隔开。
+先来试一下： 在sublime中输入如下文本，保存为test.csv 然后使用excel打开文档 果然可以! 那么导出时，只需要把数据转为纯文本，生成文件即可；
+但由于CSV并未标准化，不同软件系统使用的行分隔符和列分隔符不一定相同，这为分析和转化增加了一些难度。再加上数据内容的格式（比如日期、金额等）会由不同的国家习惯和个人习惯造成不同，处理起来会有一些麻烦。
+换行符 上面的图可以看出： * CSV文件格式单元格之间是通过,隔开的 * CSV文件格式里，换行是通过\n实现的
+另外： * 在Windows系统中，标准模式采用的是\r\n匹配Enter键 * 在mac系统中，用\r匹配Enter键 * 在Linux系统中，用\n匹配Enter键
+因此，我们只要把相应的数据按照,和\n分隔就可以了
+json to csv 前端的数据通常都是json格式，因此我们要做的是把json格式的数据转为csv的字符串； 可以自己造轮子来实现，不过目前已有开源库实现了这些能力，建议直接拿来用； json2csv：https://github.com/zemirco/json2csv API我就不贴了，可以在github上找到；
+下载 下载方式根据不同浏览器提供不同方式
+download属性 *chrome、firefox、safari、opera*支持a标签的download属性，可以借助此属性实现下载； 在&lt;a&gt;标签的href属性上配置hrefElement.href = &#39;data:attachment/csv;charset=UTF-8,\ufeff&#39;&#43;encodeURI(content);
+\uFEFF是用来解决中文乱码的情况；
+ie10/11和IEEdge ie10/11和ieEdge使用 Blob 和 msSaveBlob 以本地方式保存文件 使用 Blob()构造函数，我们首先创建一个 Blob 对象，其参数是包含所需文件内容的数组 const csvData = new Blob([BOM &#43; text], { type: &#39;text/csv&#39; }) 调用msSaveBlob下载文件 navigator.msSaveBlob(csvData, filename)
+ie9之前的版本 ie9及之前的版本不支持download属性，也没有Blob对象，需要其他方式实现
+const oWin = window."/>
+
+
+    <base href="http://wangfy263.github.io/posts/%E5%89%8D%E7%AB%AF%E5%AF%BC%E5%87%BAcsv/">
+    <title>
+  前端实现表格数据导出功能 · Wang
+</title>
+
+    <link rel="canonical" href="http://wangfy263.github.io/posts/%E5%89%8D%E7%AB%AF%E5%AF%BC%E5%87%BAcsv/">
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700|Merriweather:300,700|Source+Code+Pro:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css" integrity="sha256-oSrCnRYXvHG31SBifqP2PM1uje7SJUyX0nTwO2RJV54=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="http://wangfy263.github.io/css/coder.min.ac37073bc2826cd28ef57364a9fe339de7ebcb26dafc22fd832cb35cf5b1d048.css" integrity="sha256-rDcHO8KCbNKO9XNkqf4znefryyba/CL9gyyzXPWx0Eg=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="http://wangfy263.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="http://wangfy263.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    
+
+    <meta name="generator" content="Hugo 0.54.0" />
+  </head>
+
+  <body class=" ">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="http://wangfy263.github.io/">
+      Wang
+    </a>
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://wangfy263.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+        
+        
+        
+          
+        
+          
+            
+              <li class="navigation-item menu-separator">
+                <span>|</span>
+              </li>
+              
+            
+            <li class="navigation-item">
+              <a href="http://wangfy263.github.io/zn/">中文</a>
+            </li>
+          
+        
+      
+    </ul>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">前端实现表格数据导出功能</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2018-06-25T17:09:49Z'>
+                June 25, 2018
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              One minute read
+            </span>
+          </div>
+          
+          
+        </div>
+      </header>
+
+      <div>
+        
+
+<p>将表格数据导出为文档是常见的功能需求，通常是借助后端来实现这个功能；</p>
+
+<p>现在前端也可以直接导出文档了，CSV格式的文档；</p>
+
+<h2 id="csv格式">CSV格式</h2>
+
+<p>CSV是comma separated values的缩写，是常用的数据文档格式之一，可以用excel文档等表格处理软件打开修改，但本质上是一个纯文本文件，格式相当简单：每一行数据为行，每一列数据由分隔符隔开。</p>
+
+<p>先来试一下：
+在sublime中输入如下文本，保存为test.csv
+<img src="test.jpg" alt="test.csv" />
+然后使用excel打开文档
+<img src="excel打开.jpg" alt="excel打开" />
+果然可以!
+那么导出时，只需要把数据转为纯文本，生成文件即可；</p>
+
+<p>但由于CSV并未标准化，不同软件系统使用的行分隔符和列分隔符不一定相同，这为分析和转化增加了一些难度。再加上数据内容的格式（比如日期、金额等）会由不同的国家习惯和个人习惯造成不同，处理起来会有一些麻烦。</p>
+
+<h2 id="换行符">换行符</h2>
+
+<p>上面的图可以看出：
+* CSV文件格式单元格之间是通过,隔开的
+* CSV文件格式里，换行是通过\n实现的</p>
+
+<p>另外：
+* 在Windows系统中，标准模式采用的是<code>\r\n</code>匹配Enter键
+* 在mac系统中，用<code>\r</code>匹配Enter键
+* 在Linux系统中，用<code>\n</code>匹配Enter键</p>
+
+<p>因此，我们只要把相应的数据按照,和\n分隔就可以了</p>
+
+<h2 id="json-to-csv">json to csv</h2>
+
+<p>前端的数据通常都是json格式，因此我们要做的是把json格式的数据转为csv的字符串；
+可以自己造轮子来实现，不过目前已有开源库实现了这些能力，建议直接拿来用；
+json2csv：<a href="https://github.com/zemirco/json2csv">https://github.com/zemirco/json2csv</a>
+API我就不贴了，可以在github上找到；</p>
+
+<h2 id="下载">下载</h2>
+
+<p>下载方式根据不同浏览器提供不同方式</p>
+
+<h5 id="download属性">download属性</h5>
+
+<p>*chrome、firefox、safari、opera*支持a标签的download属性，可以借助此属性实现下载；
+在<code>&lt;a&gt;</code>标签的href属性上配置<code>hrefElement.href = 'data:attachment/csv;charset=UTF-8,\ufeff'+encodeURI(content);</code></p>
+
+<p><code>\uFEFF</code>是用来解决中文乱码的情况；</p>
+
+<h5 id="ie10-11和ieedge">ie10/11和IEEdge</h5>
+
+<p>ie10/11和ieEdge使用 Blob 和 msSaveBlob 以本地方式保存文件
+使用 Blob()构造函数，我们首先创建一个 Blob 对象，其参数是包含所需文件内容的数组
+<code>const csvData = new Blob([BOM + text], { type: 'text/csv' })</code>
+调用msSaveBlob下载文件
+<code>navigator.msSaveBlob(csvData, filename)</code></p>
+
+<h5 id="ie9之前的版本">ie9之前的版本</h5>
+
+<p>ie9及之前的版本不支持download属性，也没有Blob对象，需要其他方式实现</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">  const oWin = window.top.open(&#39;about:blank&#39;, &#39;_blank&#39;) //打开一个新标签页
+  oWin.document.charset = &#39;utf-8&#39;
+  oWin.document.write(text)                        //doument中写入数据
+  oWin.document.close()                            //关闭
+  oWin.document.execCommand(&#39;SaveAs&#39;, filename)    //唤起下载窗口
+  oWin.close()                                     //关闭标签页</pre></div>
+<p>整体代码如下：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">download (filename, text) {
+    if (has(&#39;ie&#39;) &amp;&amp; has(&#39;ie&#39;) &lt; 10) {
+      const oWin = window.top.open(&#39;about:blank&#39;, &#39;_blank&#39;)
+      oWin.document.charset = &#39;utf-8&#39;
+      oWin.document.write(text)
+      oWin.document.close()
+      oWin.document.execCommand(&#39;SaveAs&#39;, filename)
+      oWin.close()
+    } else if (has(&#39;ie&#39;) === 10 || this._isIE11() || this._isEdge()) {
+      const BOM = &#39;\uFEFF&#39;
+      const csvData = new Blob([BOM + text], { type: &#39;text/csv&#39; })
+      navigator.msSaveBlob(csvData, filename)
+    } else {
+      const link = document.createElement(&#39;a&#39;)
+      link.download = filename
+      link.href = this._getDownloadUrl(text)
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    }
+}</pre></div>
+<h2 id="示例">示例</h2>
+
+<p>下面是一个使用示例，可以看到导出csv只需要5行代码即可；</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">exportCsv () {
+  /* 引入json2csv */
+  const Json2csvParser = require(&#39;json2csv&#39;).Parser
+  /* 配置表头 */
+  const fields = [&#39;太原&#39;, &#39;大同&#39;, &#39;阳泉&#39;, &#39;长治&#39;, &#39;朔州&#39;, &#39;晋城&#39;, &#39;晋中&#39;, &#39;运城&#39;, &#39;忻州&#39;, &#39;临汾&#39;, &#39;吕梁&#39;]
+  const json2csvParser = new Json2csvParser({ fields })
+  /* 设置数据 */
+  const csv = json2csvParser.parse(this.tableData)
+  /* 下载 */
+  ExportCsv.download(&#39;各地市专享页面活动列表.csv&#39;, csv)
+}</pre></div>
+<p>表格数据：
+<img src="table.jpg" alt="表格数据" />
+点击导出：
+<img src="保存.jpg" alt="导出" />
+打开导出文档：
+<img src="导出excel.jpg" alt="打开excel" /></p>
+
+      </div>
+
+      <footer>
+        <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <footer class="footer">
+  <section class="container">
+    
+      <p>Enter a text here.</p>
+    
+     © 2019
+    
+       · 
+      Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    
+    
+       · 
+      [<a href="https://github.com/luizdepra/hugo-coder/tree/"></a>]
+    
+  </section>
+</footer>
+
+    </main>
+
+    
+
+  </body>
+
+</html>
