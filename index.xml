@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Wang</title>
-    <link>http://wangfy263.github.io/</link>
+    <link>https://wangfy263.github.io/</link>
     <description>Recent content on Wang</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn</language>
     <lastBuildDate>Mon, 31 Dec 2018 09:32:38 +0000</lastBuildDate>
     
-	<atom:link href="http://wangfy263.github.io/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://wangfy263.github.io/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>javascript实现继承的几种方式</title>
-      <link>http://wangfy263.github.io/posts/javascript%E5%AE%9E%E7%8E%B0%E7%BB%A7%E6%89%BF%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/</link>
+      <link>https://wangfy263.github.io/posts/javascript%E5%AE%9E%E7%8E%B0%E7%BB%A7%E6%89%BF%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/</link>
       <pubDate>Mon, 31 Dec 2018 09:32:38 +0000</pubDate>
       
-      <guid>http://wangfy263.github.io/posts/javascript%E5%AE%9E%E7%8E%B0%E7%BB%A7%E6%89%BF%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/</guid>
+      <guid>https://wangfy263.github.io/posts/javascript%E5%AE%9E%E7%8E%B0%E7%BB%A7%E6%89%BF%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/</guid>
       <description>背景 近期的项目需要兼容IE8，很多ES5、ES6的属性无法使用；其中一部分用到了一些继承的思想，发现自己对js实现继承的几种方式理解还不够透彻，因此花了一晚上的时间，基于《javascript高级程序设计》和《javascript语言精粹》还有ES6的extends方法，重新梳理了所有的继承方式，以及他们的优缺点。
 原型链继承 原型链继承，借助原型链，将父类的属性和方法共享给子类； 实现很简单：子类原型指向父类实例。
 function SuperType(){ this.property = true; } SuperType.prototype.getSuperValue = function(){ return this.property; } function SubType(){ this.subproperty = false; } SubType.prototype = new SuperType(); var instance = new SubType();  instance可以访问到property属性和getSuperValue方法
@@ -30,19 +30,19 @@ function SuperType(){ this.property = true; } SuperType.</description>
     
     <item>
       <title>javascript执行机制</title>
-      <link>http://wangfy263.github.io/posts/javascript%E6%89%A7%E8%A1%8C%E6%9C%BA%E5%88%B6/</link>
+      <link>https://wangfy263.github.io/posts/javascript%E6%89%A7%E8%A1%8C%E6%9C%BA%E5%88%B6/</link>
       <pubDate>Thu, 13 Dec 2018 11:25:30 +0000</pubDate>
       
-      <guid>http://wangfy263.github.io/posts/javascript%E6%89%A7%E8%A1%8C%E6%9C%BA%E5%88%B6/</guid>
+      <guid>https://wangfy263.github.io/posts/javascript%E6%89%A7%E8%A1%8C%E6%9C%BA%E5%88%B6/</guid>
       <description></description>
     </item>
     
     <item>
       <title>手动实现一个promise/A&#43;</title>
-      <link>http://wangfy263.github.io/posts/%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AApromise-a/</link>
+      <link>https://wangfy263.github.io/posts/%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AApromise-a/</link>
       <pubDate>Mon, 03 Dec 2018 14:06:06 +0000</pubDate>
       
-      <guid>http://wangfy263.github.io/posts/%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AApromise-a/</guid>
+      <guid>https://wangfy263.github.io/posts/%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AApromise-a/</guid>
       <description>开始 用了这么久Promise，今天突然想研究下Promise是怎么实现的，并且自己实现一个。
 准备工作 既然要手动实现一个Promise/A+的规范，那么首先需要知道这个规范的详细内容；
 Promise/A+规范 Promise状态 一个Promise必须在其中之一的状态： pending， fulfilled或rejected * pending状态：promise可以转成fulfilled和rejected状态 * fulfilled状态：promise的状态不可变更，并且必须有一个值，且这个值不能被改变； * rejected状态： promise的状态不可变更，并且必须有一个原因，且这个原因不可改变；
@@ -51,10 +51,10 @@ then方法 一个Promise必须提供一个then</description>
     
     <item>
       <title>vue多页面&#43;history路由模式的nginx配置</title>
-      <link>http://wangfy263.github.io/posts/vue%E5%A4%9A%E9%A1%B5%E9%9D%A2-history%E8%B7%AF%E7%94%B1%E6%A8%A1%E5%BC%8F%E7%9A%84nginx%E9%85%8D%E7%BD%AE/</link>
+      <link>https://wangfy263.github.io/posts/vue%E5%A4%9A%E9%A1%B5%E9%9D%A2-history%E8%B7%AF%E7%94%B1%E6%A8%A1%E5%BC%8F%E7%9A%84nginx%E9%85%8D%E7%BD%AE/</link>
       <pubDate>Tue, 06 Nov 2018 18:17:56 +0000</pubDate>
       
-      <guid>http://wangfy263.github.io/posts/vue%E5%A4%9A%E9%A1%B5%E9%9D%A2-history%E8%B7%AF%E7%94%B1%E6%A8%A1%E5%BC%8F%E7%9A%84nginx%E9%85%8D%E7%BD%AE/</guid>
+      <guid>https://wangfy263.github.io/posts/vue%E5%A4%9A%E9%A1%B5%E9%9D%A2-history%E8%B7%AF%E7%94%B1%E6%A8%A1%E5%BC%8F%E7%9A%84nginx%E9%85%8D%E7%BD%AE/</guid>
       <description>背景 在拼团购业务中，遇到基于vue的多页面配置+history路由模式的场景，需要在nginx下进行配置
 多页面配置 多页面配置是指，在spa项目中，有些特殊的页面需要独立处理，例如特殊的业务，或者页面的缩放程度不同； 配置多页面后，在前端项目中不再是只有1个html，那么需要在部署时，对nginx进行特别处理；
 history模式 vue-router默认是hash模式，同时也提供了history模式，这种模式充分利用 history.pushState API 来完成 URL 跳转而无须重新加载页面。
@@ -70,10 +70,10 @@ location /y { try_files $uri $uri/ /index.html; } location ^~/y/new { try_files 
     
     <item>
       <title>拼团购活动开发总结</title>
-      <link>http://wangfy263.github.io/posts/%E6%8B%BC%E5%9B%A2%E8%B4%AD%E6%B4%BB%E5%8A%A8%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/</link>
+      <link>https://wangfy263.github.io/posts/%E6%8B%BC%E5%9B%A2%E8%B4%AD%E6%B4%BB%E5%8A%A8%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/</link>
       <pubDate>Mon, 05 Nov 2018 14:24:07 +0000</pubDate>
       
-      <guid>http://wangfy263.github.io/posts/%E6%8B%BC%E5%9B%A2%E8%B4%AD%E6%B4%BB%E5%8A%A8%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/</guid>
+      <guid>https://wangfy263.github.io/posts/%E6%8B%BC%E5%9B%A2%E8%B4%AD%E6%B4%BB%E5%8A%A8%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/</guid>
       <description> 背景 拼团购活动是山西移动电子渠道营销2018项目中一个重要的验收点，恰好在今年山西移动也策划了一次拼团购活动（由于与世界杯活动冲突，此需求被砍），需求组的同事已经出了设计方案，本次开发就是在需求组同事的设计方案上进行一些调整，与项目中已经完成的补调机制整合，并且独立出和生活APP应用；
 原需求设计方案 http://eip.teamshub.com/t/3567906
 原设计方案已经比较详细，大体的流程已经具备；不过有些细节没有明确，而且设计方案中也没有体现，这些是本次开发的重点：细化原需求，明确场景以及细节；
@@ -83,20 +83,20 @@ location /y { try_files $uri $uri/ /index.html; } location ^~/y/new { try_files 
     
     <item>
       <title>营销活动数据采集日志存储方案</title>
-      <link>http://wangfy263.github.io/posts/%E8%90%A5%E9%94%80%E6%B4%BB%E5%8A%A8%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88/</link>
+      <link>https://wangfy263.github.io/posts/%E8%90%A5%E9%94%80%E6%B4%BB%E5%8A%A8%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88/</link>
       <pubDate>Fri, 02 Nov 2018 15:29:56 +0000</pubDate>
       
-      <guid>http://wangfy263.github.io/posts/%E8%90%A5%E9%94%80%E6%B4%BB%E5%8A%A8%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88/</guid>
+      <guid>https://wangfy263.github.io/posts/%E8%90%A5%E9%94%80%E6%B4%BB%E5%8A%A8%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88/</guid>
       <description>山西移动电子渠道营销2018项目中，营销活动需要采集用户行为数据，目前采集方案已有，需要确定日志存放位置；
 方案一：插码日志打印在和生活主机（8台）  好处：与和生活方案一致，网络策略已打通； 风险：需要改动和生活前端8台主机的nginx配置，为营销插码数据单独进行配置，改动风险较大；  方案二：营销活动插码日志打印在营销前台主机（3台，79/80/81）  好处：已经配置完成，可直接采集； 风险：需要打通网络；  方案三：插码日志统一打印在图片服务器主机上（8台）  好处：图片服务器没有系统应用，配置风险低；做好目录规划，后期山西分支插码可统一打印在一起； 风险：需要打通网络；  个人比较倾向于方案三，统一采集位置后，可对日志及配置进行统一管理；独立主机改造风险小；</description>
     </item>
     
     <item>
       <title>从开发一个vue组件深入理解vue的渲染机制</title>
-      <link>http://wangfy263.github.io/posts/vue%E6%B8%B2%E6%9F%93%E6%9C%BA%E5%88%B6/</link>
+      <link>https://wangfy263.github.io/posts/vue%E6%B8%B2%E6%9F%93%E6%9C%BA%E5%88%B6/</link>
       <pubDate>Fri, 12 Oct 2018 15:33:22 +0000</pubDate>
       
-      <guid>http://wangfy263.github.io/posts/vue%E6%B8%B2%E6%9F%93%E6%9C%BA%E5%88%B6/</guid>
+      <guid>https://wangfy263.github.io/posts/vue%E6%B8%B2%E6%9F%93%E6%9C%BA%E5%88%B6/</guid>
       <description>背景 近期在做一个前端推荐的组件，类似与各个APP打开时弹出的推荐效果，效果如下： 同时需要支持推荐多个，UED给出的效果图是类似轮播图的实现。 我需要将这个效果封装成一个独立的模块，提供给多个前端（和生活、营销）的多个位置使用（首页、营销活动页面。。）使用；
 组件设计 在vue中，任何一个独立的UI模块都可以封装成（.vue）的组件；一般情况下，vue的组件都对应一个html自定义标签，在编译过程中，把组件模板替换到标签位置。但这种方式不适合当前的场景，推荐组件应该是一个全局组件，类似于alert的效果， 不需要设置html标签； 为了实现这种方式，需要先理解vue的组件是如何渲染的；
 渲染机制 vue是将el或template字段传入的内容编译成渲染函数，渲染函数会把模板编译成虚拟DOM节点，同时每个渲染函数都对应一个观察者（watcher), watcher会监听每个数据的get和set操作，这样就实现了当数据修改时能同步渲染DOM树；
@@ -115,10 +115,10 @@ import Vue from &amp;#39;vue&amp;#39;; import Main from &amp;#39;./main.vue&amp;
     
     <item>
       <title>nginx配置踩坑--rewrite</title>
-      <link>http://wangfy263.github.io/posts/nginx%E9%85%8D%E7%BD%AE%E8%B8%A9%E5%9D%91-rewrite/</link>
+      <link>https://wangfy263.github.io/posts/nginx%E9%85%8D%E7%BD%AE%E8%B8%A9%E5%9D%91-rewrite/</link>
       <pubDate>Wed, 05 Sep 2018 18:52:43 +0000</pubDate>
       
-      <guid>http://wangfy263.github.io/posts/nginx%E9%85%8D%E7%BD%AE%E8%B8%A9%E5%9D%91-rewrite/</guid>
+      <guid>https://wangfy263.github.io/posts/nginx%E9%85%8D%E7%BD%AE%E8%B8%A9%E5%9D%91-rewrite/</guid>
       <description>问题 在协助部署吉林wap商城代码时，nginx配置出现一个问题； 通常前端框架的nginx配置如下：
 location ~* \.(html|htm)$ { root /emallapp/Mobile_mall; etag off; if ($request_uri ~* &amp;#34;^/([^/]*)/([^/]*).html&amp;#34;) { set $appid $2; rewrite ^/([^/]*)/([^/]*).html /$2.html; } if ($request_uri ~* &amp;#34;^/([^/]*)/([^/]*)/([^/]*).html&amp;#34;) { set $appid $3; rewrite ^/([^/]*)/([^/]*)/([^/]*).html /$2.html; } index index.html index.htm; expires 1s; } 因为要增加上下文，需要在匹配html前先把上下文处理掉，否则资源文件无法找到：
 locatio~^/mall/ { rewrite ^/mall/(.*)$ /$1 last; } 问题就出现在这里，增加了这段代码后，上面的html匹配不到了
@@ -130,10 +130,10 @@ location ~* \.(html|htm)$ { root /emallapp/Mobile_mall; etag off; if ($request_u
     
     <item>
       <title>fis发布过程给文件增加md5戳导致文件加载404异常问题分析解决</title>
-      <link>http://wangfy263.github.io/posts/fis%E5%8F%91%E5%B8%83%E8%BF%87%E7%A8%8B%E7%BB%99%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0md5%E6%88%B3%E5%AF%BC%E8%87%B4%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD404%E5%BC%82%E5%B8%B8%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90%E8%A7%A3%E5%86%B3/</link>
+      <link>https://wangfy263.github.io/posts/fis%E5%8F%91%E5%B8%83%E8%BF%87%E7%A8%8B%E7%BB%99%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0md5%E6%88%B3%E5%AF%BC%E8%87%B4%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD404%E5%BC%82%E5%B8%B8%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90%E8%A7%A3%E5%86%B3/</link>
       <pubDate>Fri, 10 Aug 2018 15:32:11 +0000</pubDate>
       
-      <guid>http://wangfy263.github.io/posts/fis%E5%8F%91%E5%B8%83%E8%BF%87%E7%A8%8B%E7%BB%99%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0md5%E6%88%B3%E5%AF%BC%E8%87%B4%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD404%E5%BC%82%E5%B8%B8%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90%E8%A7%A3%E5%86%B3/</guid>
+      <guid>https://wangfy263.github.io/posts/fis%E5%8F%91%E5%B8%83%E8%BF%87%E7%A8%8B%E7%BB%99%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0md5%E6%88%B3%E5%AF%BC%E8%87%B4%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD404%E5%BC%82%E5%B8%B8%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90%E8%A7%A3%E5%86%B3/</guid>
       <description>背景 昨晚与shenjb讨论fis发布过程中，增加为资源文件增加md5戳的配置后，生成的文件与编辑过程中引用的位置所加的md5戳不相同，导致访问时，文件找不到；
 现象 当引入的js中使用模板引擎tpl时，就会出现md5戳不一致的情况，当js中不依赖tpl模板时，则不会出现这种现象
 分析 拿到简易版工程运行，出现md5戳不一致的问题：如下图 可以看到经过编译后生成的login.js的md5戳，与html中引用的不一致；
@@ -147,10 +147,10 @@ if (file.id === &amp;#34;portal-op-web-view/apps/serviceapps/login/js/login.js&a
     
     <item>
       <title>营销活动规则配置VUE实现</title>
-      <link>http://wangfy263.github.io/posts/%E8%A7%84%E5%88%99%E9%85%8D%E7%BD%AE%E7%95%8C%E9%9D%A2%E8%AE%BE%E8%AE%A1/</link>
+      <link>https://wangfy263.github.io/posts/%E8%A7%84%E5%88%99%E9%85%8D%E7%BD%AE%E7%95%8C%E9%9D%A2%E8%AE%BE%E8%AE%A1/</link>
       <pubDate>Thu, 02 Aug 2018 18:16:47 +0000</pubDate>
       
-      <guid>http://wangfy263.github.io/posts/%E8%A7%84%E5%88%99%E9%85%8D%E7%BD%AE%E7%95%8C%E9%9D%A2%E8%AE%BE%E8%AE%A1/</guid>
+      <guid>https://wangfy263.github.io/posts/%E8%A7%84%E5%88%99%E9%85%8D%E7%BD%AE%E7%95%8C%E9%9D%A2%E8%AE%BE%E8%AE%A1/</guid>
       <description>背景 山西移动电子渠道营销项目中，需要实现营销活动的可视化配置能力 其中一部分重点内容是如何实现活动规则的可视化配置；
 功能描述  营销活动通常意味着需要条件，满足某些条件，才可以参加活动，这些条件我称之为“规则” 在营销能力提升项目中，需要在后台编辑营销活动时，同时给营销活动设置“规则”；发布至前台工程后，可根据后台配置的“规则”进行验证；   需求细化  此功能并不是针对某个营销活动，而是通用型的解决方案；“规则”要不断添加积累 已有“规则”需要支持各种排列组合； “规则”的编辑和修改需要实时生效，以应对营销活动的频繁变化；  界面设计 * 规则分为基础规则（必选规则），以及其他规则（可选规则） * 可选规则可动态添加删除 * 部分规则可重复添加 * 每个规则都需要进行输入验证 * 提交时要对所有规则进行验证
 接口设计 前端设计重点 每个规则抽象为单独的VUE组件，需要在父组件中动态加载子组件； 动态组件可以通过 Vue 的 &amp;lt;component&amp;gt; 元素加一个特殊的 is 特性来实现：
@@ -164,10 +164,10 @@ for (let ref in refs) { // 查找页面中存在的子组件 if (Object.prototyp
     
     <item>
       <title>神经网络梯度下降训练模型</title>
-      <link>http://wangfy263.github.io/posts/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/</link>
+      <link>https://wangfy263.github.io/posts/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/</link>
       <pubDate>Sat, 28 Jul 2018 08:29:35 +0000</pubDate>
       
-      <guid>http://wangfy263.github.io/posts/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/</guid>
+      <guid>https://wangfy263.github.io/posts/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/</guid>
       <description>先列个提纲，后续补充；
 1、抽象数据模型：把训练模型抽象为由多个0-1之间的数值集合； 例如手写数字，抽象为784个像素点，每个像素点的值（0-1）表示该像素点的亮度；那么这一组像素点的数值就可以表示出手写数字的图形； 那么我们的训练数据就是每个手写数字对应这一组像素值集合；
 2、设计隐含层：需要根据实际场景确认； 需要再看一遍视频
@@ -181,10 +181,10 @@ for (let ref in refs) { // 查找页面中存在的子组件 if (Object.prototyp
     
     <item>
       <title>和生活首页在部分机型下白屏原因分析</title>
-      <link>http://wangfy263.github.io/posts/%E9%A6%96%E9%A1%B5%E5%9C%A8%E9%83%A8%E5%88%86%E6%9C%BA%E5%9E%8B%E4%B8%8B%E7%99%BD%E5%B1%8F%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/</link>
+      <link>https://wangfy263.github.io/posts/%E9%A6%96%E9%A1%B5%E5%9C%A8%E9%83%A8%E5%88%86%E6%9C%BA%E5%9E%8B%E4%B8%8B%E7%99%BD%E5%B1%8F%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/</link>
       <pubDate>Mon, 16 Jul 2018 16:53:15 +0000</pubDate>
       
-      <guid>http://wangfy263.github.io/posts/%E9%A6%96%E9%A1%B5%E5%9C%A8%E9%83%A8%E5%88%86%E6%9C%BA%E5%9E%8B%E4%B8%8B%E7%99%BD%E5%B1%8F%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/</guid>
+      <guid>https://wangfy263.github.io/posts/%E9%A6%96%E9%A1%B5%E5%9C%A8%E9%83%A8%E5%88%86%E6%9C%BA%E5%9E%8B%E4%B8%8B%E7%99%BD%E5%B1%8F%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/</guid>
       <description> 问题 和生活首页在世界杯活动上线后，发现极个别iphone手机（1部iphone6plus、1部iphone7）首页出现白屏，但其他同事的iphone6plus、iphone7正常
 问题分析 出现问题的两部手机分别是：iphone6plus（ios8.2）、iphone7（ios10.1.1）；其他同型号未出现问题的手机，系统均是ios11，因此推断是ios兼容性导致的问题；
 ios8.2 借助mac系统的调试工具查看，发现在ios8下首页出现报错信息，信息显示不支持Class语法；
@@ -200,10 +200,10 @@ webpack中的babel插件默认是不会对node_modules下的文件进行转换�
     
     <item>
       <title>前端实现表格数据导出功能</title>
-      <link>http://wangfy263.github.io/posts/%E5%89%8D%E7%AB%AF%E5%AF%BC%E5%87%BAcsv/</link>
+      <link>https://wangfy263.github.io/posts/%E5%89%8D%E7%AB%AF%E5%AF%BC%E5%87%BAcsv/</link>
       <pubDate>Mon, 25 Jun 2018 17:09:49 +0000</pubDate>
       
-      <guid>http://wangfy263.github.io/posts/%E5%89%8D%E7%AB%AF%E5%AF%BC%E5%87%BAcsv/</guid>
+      <guid>https://wangfy263.github.io/posts/%E5%89%8D%E7%AB%AF%E5%AF%BC%E5%87%BAcsv/</guid>
       <description>将表格数据导出为文档是常见的功能需求，通常是借助后端来实现这个功能；
 现在前端也可以直接导出文档了，CSV格式的文档；
 CSV格式 CSV是comma separated values的缩写，是常用的数据文档格式之一，可以用excel文档等表格处理软件打开修改，但本质上是一个纯文本文件，格式相当简单：每一行数据为行，每一列数据由分隔符隔开。
@@ -223,10 +223,10 @@ const oWin = window.</description>
     
     <item>
       <title>jenkins&#43;Gitlab持续集成前端项目实践</title>
-      <link>http://wangfy263.github.io/posts/jenkins%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/</link>
+      <link>https://wangfy263.github.io/posts/jenkins%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/</link>
       <pubDate>Thu, 21 Jun 2018 08:56:48 +0000</pubDate>
       
-      <guid>http://wangfy263.github.io/posts/jenkins%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/</guid>
+      <guid>https://wangfy263.github.io/posts/jenkins%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/</guid>
       <description>安装插件 由于相关项目在gitLab上管理因此需要安装相关插件： Git plugin
 GitLab Plugin Publish Over FTP NodeJS Plugin
 部署jenkins的机器如果有网络可通过jenkins管理界面直接安装： 全局配置 git配置 在系统管理&amp;ndash;全局工具配置界面，配置git环境变量 Path to Git executable这里会从环境变量的配置中找git，找不到会提示： 填写完整路径也可以识别，但是在执行打包命令时会出现问题；
@@ -239,10 +239,10 @@ FTP配置 在系统管理&amp;ndash;全局工具配置界面，配置FTP信息�
     
     <item>
       <title>可视化编辑系统实践</title>
-      <link>http://wangfy263.github.io/posts/%E5%8F%AF%E8%A7%86%E5%8C%96%E7%BC%96%E8%BE%91%E7%B3%BB%E7%BB%9F%E5%AE%9E%E8%B7%B5/</link>
+      <link>https://wangfy263.github.io/posts/%E5%8F%AF%E8%A7%86%E5%8C%96%E7%BC%96%E8%BE%91%E7%B3%BB%E7%BB%9F%E5%AE%9E%E8%B7%B5/</link>
       <pubDate>Tue, 29 May 2018 18:42:19 +0000</pubDate>
       
-      <guid>http://wangfy263.github.io/posts/%E5%8F%AF%E8%A7%86%E5%8C%96%E7%BC%96%E8%BE%91%E7%B3%BB%E7%BB%9F%E5%AE%9E%E8%B7%B5/</guid>
+      <guid>https://wangfy263.github.io/posts/%E5%8F%AF%E8%A7%86%E5%8C%96%E7%BC%96%E8%BE%91%E7%B3%BB%E7%BB%9F%E5%AE%9E%E8%B7%B5/</guid>
       <description>这篇我想写写可视化编辑系统的实践，重点在数据模型，静态化，工作流，预览等一系列系统功能的实践上，具体的可视化编辑功能，将另开一贴来介绍；
 背景 前端工程中，有一些页面涉及运营位，根据市场的变化以及运营的要求，需要频繁的更迭，开发人员需要频繁的修改上线；由于生产环境的安全限制，手动上线费时费力，还需要走更多的流程（打申请，写文档，等审批），占用了大量的时间确不能产生多少价值；
 CMS 传统的解决方案就是采用内容管理平台，运营人员通过CMS来修改，发布内容，包括文字，图片，表格等等一切想要发布的信息；CMS系统把数据和模板结合起来，静态化生成HTML页面或代码块，通过ftp协议上传到前端应用中，供项目使用；
@@ -260,10 +260,10 @@ CMS系统已经向前迈了一大步，但仍存在不少问题： 1. 比较笨�
     
     <item>
       <title>gitflow工作流程使用经验</title>
-      <link>http://wangfy263.github.io/posts/gitflow%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C/</link>
+      <link>https://wangfy263.github.io/posts/gitflow%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C/</link>
       <pubDate>Tue, 15 May 2018 21:13:21 +0000</pubDate>
       
-      <guid>http://wangfy263.github.io/posts/gitflow%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C/</guid>
+      <guid>https://wangfy263.github.io/posts/gitflow%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C/</guid>
       <description>背景： 公司一直使用svn做版本管控，项目一般只有两个分支，开发区和发布区，开发人员在开发过程中提交代码，然后在测试部署环境，测试通过后将代码同步至发布区，从发布区打包上线到生产环境；
 前端项目现在多采用MVVM架构，每次上线需要全量打包，再加上多人协作的场景下，svn的管控模式已经难以满足复杂的场景；
 先分析下问题所在： 1、开发人员多，每个人都在发布区提交代码，发布区的代码经常出现一更新就无法运行，只能先一一排错；同时测试环境沦为鸡肋，因为没有对应的稳定版本； 2、并行开发的版本多，同时有3个以上的需求在开发，但上线的时间并不一致，导致开发区的代码无法作为测试版本，只能由开发人员自己提交发布区，测试人员在发布区打包上线并测试；发布区沦为测试区； 3、前端项目无法增量上线，每次上线需要发布人全量打包，发布区版本由发布人员认为管控，上线日需要多次打包测试；
@@ -276,10 +276,10 @@ Gitflow工作流没有用超出功能分支工作流的概念和命令, 而是�
     
     <item>
       <title>基于vue的管理系统权限管控方案</title>
-      <link>http://wangfy263.github.io/posts/%E5%9F%BA%E4%BA%8Evue%E7%9A%84%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E6%9D%83%E9%99%90%E7%AE%A1%E6%8E%A7%E6%96%B9%E6%A1%88/</link>
+      <link>https://wangfy263.github.io/posts/%E5%9F%BA%E4%BA%8Evue%E7%9A%84%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E6%9D%83%E9%99%90%E7%AE%A1%E6%8E%A7%E6%96%B9%E6%A1%88/</link>
       <pubDate>Mon, 14 May 2018 14:07:52 +0000</pubDate>
       
-      <guid>http://wangfy263.github.io/posts/%E5%9F%BA%E4%BA%8Evue%E7%9A%84%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E6%9D%83%E9%99%90%E7%AE%A1%E6%8E%A7%E6%96%B9%E6%A1%88/</guid>
+      <guid>https://wangfy263.github.io/posts/%E5%9F%BA%E4%BA%8Evue%E7%9A%84%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E6%9D%83%E9%99%90%E7%AE%A1%E6%8E%A7%E6%96%B9%E6%A1%88/</guid>
       <description>基于vue的管理系统的权限管控方案 近期在做后台管理系统，前端是vue + vue-router + vuex + webpack实现的spa应用；管理系统中有可视化编辑、工作流、运营数据、报表等不同的能力，需要开放给不同的用户角色使用，因此需要对菜单进行权限控制；
 还有一些特殊的情况，由于运营数据和可视化配置是两个前端应用，展示效果是统一的，技术栈也相同（vue&amp;hellip;），但是需要统一进行登录和权限管理；（后期也可能会有更多这样的情况，如：报表系统）
 最终想要达到的目标： 1. 不同用户登录后看到的菜单不同； 2. 多个前端系统的菜单统一 3. 系统内的菜单是路由访问，系统外的菜单使用外链跳转； 4. 即使用户保存了前端路由，没有权限也无法访问；
@@ -293,10 +293,10 @@ axios({method: &amp;#39;post&amp;#39;, url: &amp;#39;/y/adm/market/sso/asynchron
     
     <item>
       <title>基于vue的埋点方案</title>
-      <link>http://wangfy263.github.io/posts/%E5%9F%BA%E4%BA%8Evue%E7%9A%84%E5%9F%8B%E7%82%B9%E6%96%B9%E6%A1%88/</link>
+      <link>https://wangfy263.github.io/posts/%E5%9F%BA%E4%BA%8Evue%E7%9A%84%E5%9F%8B%E7%82%B9%E6%96%B9%E6%A1%88/</link>
       <pubDate>Mon, 07 May 2018 08:59:01 +0000</pubDate>
       
-      <guid>http://wangfy263.github.io/posts/%E5%9F%BA%E4%BA%8Evue%E7%9A%84%E5%9F%8B%E7%82%B9%E6%96%B9%E6%A1%88/</guid>
+      <guid>https://wangfy263.github.io/posts/%E5%9F%BA%E4%BA%8Evue%E7%9A%84%E5%9F%8B%E7%82%B9%E6%96%B9%E6%A1%88/</guid>
       <description>buried-point基于vue的埋点方案 安装Install npm install buried-point 配置configuration main.js中进行如下配置：  import BuriedPoint from &amp;lsquo;buried-point&amp;rsquo;
 let option = { router: router, //vue路由对象 domain: &amp;lsquo;127.0.0.1:18080&amp;rsquo;, //埋点服务器地址 path: &amp;lsquo;/nresource/dcsImg&amp;rsquo; //埋点请求路径 /nresource/dcsImg/dcs.log } Vue.use(BuriedPoint, option)
 
