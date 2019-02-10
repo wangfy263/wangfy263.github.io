@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Unfinisheds on Wang</title>
+    <link>https://wangfy263.github.io/unfinished/</link>
+    <description>Recent content in Unfinisheds on Wang</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zn</language>
+    <lastBuildDate>Wed, 09 Jan 2019 16:24:37 +0000</lastBuildDate>
+    
+	<atom:link href="https://wangfy263.github.io/unfinished/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>javascript异常总结</title>
+      <link>https://wangfy263.github.io/unfinished/javascript%E5%BC%82%E5%B8%B8%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Wed, 09 Jan 2019 16:24:37 +0000</pubDate>
+      
+      <guid>https://wangfy263.github.io/unfinished/javascript%E5%BC%82%E5%B8%B8%E6%80%BB%E7%BB%93/</guid>
+      <description>写在前面 前端由于javascript特性，加上浏览器环境的复杂性，非常容易报错，又非常难以定位错误。最近在使用async/await语法时，捕获异常的部分总出问题。学习一下，在这里总结。
+大纲： Error的基础
+promise和async/await捕获异常方式
+异常信息采集
+参考文章：https://segmentfault.com/a/1190000017708563</description>
+    </item>
+    
+    <item>
+      <title>手动实现一个promise/A&#43;</title>
+      <link>https://wangfy263.github.io/unfinished/%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AApromise-a/</link>
+      <pubDate>Mon, 03 Dec 2018 14:06:06 +0000</pubDate>
+      
+      <guid>https://wangfy263.github.io/unfinished/%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AApromise-a/</guid>
+      <description>开始 用了这么久Promise，今天突然想研究下Promise是怎么实现的，并且自己实现一个。
+准备工作 既然要手动实现一个Promise/A+的规范，那么首先需要知道这个规范的详细内容；
+Promise/A+规范 Promise状态 一个Promise必须在其中之一的状态： pending， fulfilled或rejected * pending状态：promise可以转成fulfilled和rejected状态 * fulfilled状态：promise的状态不可变更，并且必须有一个值，且这个值不能被改变； * rejected状态： promise的状态不可变更，并且必须有一个原因，且这个原因不可改变；
+then方法 一个Promise必须提供一个then</description>
+    </item>
+    
+    <item>
+      <title>神经网络梯度下降训练模型</title>
+      <link>https://wangfy263.github.io/unfinished/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/</link>
+      <pubDate>Sat, 28 Jul 2018 08:29:35 +0000</pubDate>
+      
+      <guid>https://wangfy263.github.io/unfinished/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/</guid>
+      <description>先列个提纲，后续补充；
+1、抽象数据模型：把训练模型抽象为由多个0-1之间的数值集合； 例如手写数字，抽象为784个像素点，每个像素点的值（0-1）表示该像素点的亮度；那么这一组像素点的数值就可以表示出手写数字的图形； 那么我们的训练数据就是每个手写数字对应这一组像素值集合；
+2、设计隐含层：需要根据实际场景确认； 需要再看一遍视频
+3、输出层就是0-9这10个数字
+4、下一层节点数值计算，下一层每个节点的数值受到上一层没个节点的数值影响； 但上层的每个节点的影响程度不同，因此需要给上一层每个节点加一个权重值W（根据自己判断，先写一个）； 下层节点的值计算就是（W1A1+W2A2+&amp;hellip;WnAn）为了让这个值也处在0-1之间，需要给结果加一个sigmoid函数； 设置偏置值b，偏置值如何解释？ 最终，下层节点的计算方式是signoid(W1A1+W2A2+&amp;hellip;WnAn-b)
+至此，我们可以根据上层节点的数值，以及偏置值来计算下层节点的每个值；
+那么可以根据我们初始的设置的权重和偏置值，计算出0-9这10个数字对应的值，我们可以理解，越接近1是这个数字的可能越大
+5、我们初始设置的权重w和偏置b，肯定不能准确的得出结果，那么我们需要通过计算反复的调整这些值； 编写公式的例子 $$ \sum_{i=0}^n i^2 = \frac{(n^2+n)(2n+1)}{6} $$
+首先，</description>
+    </item>
+    
+  </channel>
+</rss>

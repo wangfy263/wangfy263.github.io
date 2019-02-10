@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Companies on Wang</title>
+    <link>https://wangfy263.github.io/company/</link>
+    <description>Recent content in Companies on Wang</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zn</language>
+    <lastBuildDate>Fri, 25 Jan 2019 15:30:12 +0000</lastBuildDate>
+    
+	<atom:link href="https://wangfy263.github.io/company/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>易问web版浏览器支持方案分析</title>
+      <link>https://wangfy263.github.io/company/%E6%98%93%E9%97%AEweb%E7%89%88%E6%B5%8F%E8%A7%88%E5%99%A8%E6%94%AF%E6%8C%81%E6%96%B9%E6%A1%88%E5%88%86%E6%9E%90/</link>
+      <pubDate>Fri, 25 Jan 2019 15:30:12 +0000</pubDate>
+      
+      <guid>https://wangfy263.github.io/company/%E6%98%93%E9%97%AEweb%E7%89%88%E6%B5%8F%E8%A7%88%E5%99%A8%E6%94%AF%E6%8C%81%E6%96%B9%E6%A1%88%E5%88%86%E6%9E%90/</guid>
+      <description>背景 易问.net向web迁移过程，需要考虑浏览器支持性的问题。支持不同的浏览器技术架构和实现方案也有所不同
+现状 易问.net版有一部分用户仍然使用的是windows xp系统，而xp系统，IE浏览器最高只能支持到IE8。
+   省份 总用户 xp用户     福建省 24957 1270   广西壮族自治区 33389 1116   江西省 25330 308   陕西省 21060 291   山东省 14466 242   山西省 9549 214   贵州省 4810 192   重庆电信 15117 191   云南省 15348 103   黑龙江电信 5939 98   吉林省 6458 94   内蒙古自治区 7952 87   辽宁省 6593 79   海南省 8553 78   河北省 24747 77   宁夏回族自治区 3459 77   甘肃省 6505 52   湖北省 6379 41   天津市 3552 41   青海省 4506 21   西藏自治区 3769 17   易问集团支撑项目组 170 10   四川省 714 7   北京市 2943 5   号百信息服务有限公司 80 0   河南省 2 0   翼支付 12 0   云公司 170 0    * 以上数据由@xucf(徐超凡)统计，感谢</description>
+    </item>
+    
+    <item>
+      <title>拼团购活动开发总结</title>
+      <link>https://wangfy263.github.io/company/%E6%8B%BC%E5%9B%A2%E8%B4%AD%E6%B4%BB%E5%8A%A8%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Mon, 05 Nov 2018 14:24:07 +0000</pubDate>
+      
+      <guid>https://wangfy263.github.io/company/%E6%8B%BC%E5%9B%A2%E8%B4%AD%E6%B4%BB%E5%8A%A8%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/</guid>
+      <description> 背景 拼团购活动是山西移动电子渠道营销2018项目中一个重要的验收点，恰好在今年山西移动也策划了一次拼团购活动（由于与世界杯活动冲突，此需求被砍），需求组的同事已经出了设计方案，本次开发就是在需求组同事的设计方案上进行一些调整，与项目中已经完成的补调机制整合，并且独立出和生活APP应用；
+原需求设计方案 http://eip.teamshub.com/t/3567906
+原设计方案已经比较详细，大体的流程已经具备；不过有些细节没有明确，而且设计方案中也没有体现，这些是本次开发的重点：细化原需求，明确场景以及细节；
+需求细化  明确次数限制是针对总人数的限制； 原需求中有参与次数的限制，经过讨论和确认，次数限制是针对参与活动的总人数进行限制（2w人次）每个档次的活动并不独立限制次数；并且，一旦成团即占据了参与人数； 明确由于余额变化导致的参团失败情况的处理； 由于无法做到余额预占，而活动参与到成团办理有一定的时间间隔，很容易出现参与时余额足够，成团后余额不足的情况； 经过讨论，这样的情况为用户保留办理资格，可通过界面进行补办（补调机制已经在电渠营销前台实现）； 明确限制次数可进行一定的冗余； 团购分为3人团和5人团，最终成团人数很有可能不是恰好2w人，当剩余2人时，不论下一个成团是3人还是5人都一定会超出； 经过讨论，可以接受1-4人的冗余；因此在成团前进行验证，只要成团前人数不足2w即可成团，而成团前一但人数超过2w即判定为参与活动失败； 每一个账号在同一时间最多只能在一个团中，只有成团后才能再次发起/参与拼团； 团购信息进行分享时，微信打开后引导用户拉起和生活APP进行访问，不提供H5直接访问界面；  细化方案 http://eip.teamshub.com/t/3738726
+新数据模型 开发过程中遇到的问题&amp;amp;总结  前端多页面配置 @lihao_mios http://eip.teamshub.com/t/3768089 vue的history模式改造 @lihao_mios http://eip.teamshub.com/t/3768294 vue多页面场景+history路由模式下的nginx配置方案； @wangfy http://eip.teamshub.com/t/3770330 拼团购活动总结 @ hantao http://eip.teamshub.com/t/3769652 &amp;mdash;待补充  </description>
+    </item>
+    
+    <item>
+      <title>营销活动数据采集日志存储方案</title>
+      <link>https://wangfy263.github.io/company/%E8%90%A5%E9%94%80%E6%B4%BB%E5%8A%A8%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88/</link>
+      <pubDate>Fri, 02 Nov 2018 15:29:56 +0000</pubDate>
+      
+      <guid>https://wangfy263.github.io/company/%E8%90%A5%E9%94%80%E6%B4%BB%E5%8A%A8%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88/</guid>
+      <description>山西移动电子渠道营销2018项目中，营销活动需要采集用户行为数据，目前采集方案已有，需要确定日志存放位置；
+方案一：插码日志打印在和生活主机（8台）  好处：与和生活方案一致，网络策略已打通； 风险：需要改动和生活前端8台主机的nginx配置，为营销插码数据单独进行配置，改动风险较大；  方案二：营销活动插码日志打印在营销前台主机（3台，79/80/81）  好处：已经配置完成，可直接采集； 风险：需要打通网络；  方案三：插码日志统一打印在图片服务器主机上（8台）  好处：图片服务器没有系统应用，配置风险低；做好目录规划，后期山西分支插码可统一打印在一起； 风险：需要打通网络；  个人比较倾向于方案三，统一采集位置后，可对日志及配置进行统一管理；独立主机改造风险小；</description>
+    </item>
+    
+    <item>
+      <title>fis发布过程给文件增加md5戳导致文件加载404异常问题分析解决</title>
+      <link>https://wangfy263.github.io/company/fis%E5%8F%91%E5%B8%83%E8%BF%87%E7%A8%8B%E7%BB%99%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0md5%E6%88%B3%E5%AF%BC%E8%87%B4%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD404%E5%BC%82%E5%B8%B8%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90%E8%A7%A3%E5%86%B3/</link>
+      <pubDate>Fri, 10 Aug 2018 15:32:11 +0000</pubDate>
+      
+      <guid>https://wangfy263.github.io/company/fis%E5%8F%91%E5%B8%83%E8%BF%87%E7%A8%8B%E7%BB%99%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0md5%E6%88%B3%E5%AF%BC%E8%87%B4%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD404%E5%BC%82%E5%B8%B8%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90%E8%A7%A3%E5%86%B3/</guid>
+      <description>背景 昨晚与shenjb讨论fis发布过程中，增加为资源文件增加md5戳的配置后，生成的文件与编辑过程中引用的位置所加的md5戳不相同，导致访问时，文件找不到；
+现象 当引入的js中使用模板引擎tpl时，就会出现md5戳不一致的情况，当js中不依赖tpl模板时，则不会出现这种现象
+分析 拿到简易版工程运行，出现md5戳不一致的问题：如下图 可以看到经过编译后生成的login.js的md5戳，与html中引用的不一致；
+fis的relase过程是先进行单文件编译，然后打包，最后生成文件；
+找到fis的源码，在relase命令的入口，找到增加md5戳的位置： release命令的入口在fis\node_modules\fis-kernel\lib\release.js文件中
+var res = ret.map.res[id] = { uri : file.getUrl(opt.hash, opt.domain), type : file.rExt.replace(/^\./, &amp;#39;&amp;#39;) }; 上面的代码中file.getUrl方法中会给当前文件增加md5戳，实际调用方法是file.getHash(),位于fis\node_modules\fis-kernel\lib\file.js中：
+getHash : function(){ if(typeof this._md5 === &amp;#39;undefined&amp;#39;){ Object.defineProperty(this, &amp;#39;_md5&amp;#39;, { value : fis.util.md5(this.getContent()), writable : true }); } return this._md5; }, 这个方法根据文件的内容生成唯一的md5戳，内容有变化则md5戳也不同；
+那么我们就把文件内容和md5戳都打印出来：
+if (file.id === &amp;#34;portal-op-web-view/apps/serviceapps/login/js/login.js&amp;#34;) { console.log(&amp;#34;=============================&amp;#34;) console.log(file._content) console.log(file.getHash()) console.log(&amp;#34;=============================&amp;#34;) } var res = ret.map.res[id] = { uri : file.getUrl(opt.hash, opt.domain), type : file.</description>
+    </item>
+    
+    <item>
+      <title>和生活首页在部分机型下白屏原因分析</title>
+      <link>https://wangfy263.github.io/company/%E9%A6%96%E9%A1%B5%E5%9C%A8%E9%83%A8%E5%88%86%E6%9C%BA%E5%9E%8B%E4%B8%8B%E7%99%BD%E5%B1%8F%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/</link>
+      <pubDate>Mon, 16 Jul 2018 16:53:15 +0000</pubDate>
+      
+      <guid>https://wangfy263.github.io/company/%E9%A6%96%E9%A1%B5%E5%9C%A8%E9%83%A8%E5%88%86%E6%9C%BA%E5%9E%8B%E4%B8%8B%E7%99%BD%E5%B1%8F%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/</guid>
+      <description> 问题 和生活首页在世界杯活动上线后，发现极个别iphone手机（1部iphone6plus、1部iphone7）首页出现白屏，但其他同事的iphone6plus、iphone7正常
+问题分析 出现问题的两部手机分别是：iphone6plus（ios8.2）、iphone7（ios10.1.1）；其他同型号未出现问题的手机，系统均是ios11，因此推断是ios兼容性导致的问题；
+ios8.2 借助mac系统的调试工具查看，发现在ios8下首页出现报错信息，信息显示不支持Class语法；
+Class语法是ES6标准中新增的，在ios8并不支持；
+查找错误信息所在位置，是swiper组件依赖的Dom7库；
+swiper是首页改版时引入的新的轮播图插件，也就是说导致ios8，白屏的原因是swiper中有ES6的语法；
+ios10.1.1 在swiper的github上找到关于ios10的issue issue中并没有给出具体的解决方案； 在framework7关于Dom7的issue中，找到： 确保您的webpack / babel还将导入的F7转换为ES5，并解析F7的节点模块
+那么基本可以确认ios10.1.1也不支持ES6的语法；
+查询一下: 可以看到，ES6的class语法是从ios10.3版本开始兼容的，ios10.1.1并不兼容该语法
+与印象中不同，实际上几乎所有的ES6语法都是从ios10.3开始兼容的 解决方案 按照issue中所述的解决方案，只需要将ES6的语法转为ES5即可；
+webpack中的babel插件默认是不会对node_modules下的文件进行转换的，因此需要显示的将swiper和dom7的文件进行转换 </description>
+    </item>
+    
+  </channel>
+</rss>
