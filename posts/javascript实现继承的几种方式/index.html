@@ -283,6 +283,35 @@ inheritPrototype(SubType, SuperType);
 
 <p>唯一的缺点就是实现相对复杂，IE8以上可以通过Object.create()简化部分流程</p>
 
+<h2 id="ecmascript-2015的继承方式-extend">ECMAScript 2015的继承方式 （extend）</h2>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#fff;font-weight:bold">class</span> Rectangle {
+    constructor(length, width) {
+        <span style="color:#fff;font-weight:bold">this</span>.length = length;
+        <span style="color:#fff;font-weight:bold">this</span>.width = width;
+    }
+    getArea() {
+        <span style="color:#fff;font-weight:bold">return</span> <span style="color:#fff;font-weight:bold">this</span>.length * <span style="color:#fff;font-weight:bold">this</span>.width;
+    }
+}
+
+<span style="color:#fff;font-weight:bold">class</span> Square <span style="color:#fff;font-weight:bold">extends</span> Rectangle {
+    constructor(length) {
+    <span style="color:#007f7f">// 与 Rectangle.call(this, length, length) 相同
+</span><span style="color:#007f7f"></span>        <span style="color:#fff;font-weight:bold">super</span>(length, length);
+    }
+}
+
+<span style="color:#fff;font-weight:bold">var</span> square = <span style="color:#fff;font-weight:bold">new</span> Square(<span style="color:#ff0;font-weight:bold">3</span>);
+console.log(square.getArea()); <span style="color:#007f7f">// 9
+</span><span style="color:#007f7f"></span>console.log(square <span style="color:#fff;font-weight:bold">instanceof</span> Square); <span style="color:#007f7f">// true
+</span><span style="color:#007f7f"></span>console.log(square <span style="color:#fff;font-weight:bold">instanceof</span> Rectangle); <span style="color:#007f7f">// true
+</span></code></pre></div>
+<p>几个注意点：
+1. 如果派生类指定了构造器，就需要使用 super() ，否则会造成错误。如果没有指定构造器，则会默认使用super()
+2. 在构造器中，你必须在访问 this 之前调用 super() 。由于 super() 负责初始化this ，因此试图先访问 this 自然就会造成错误。
+3. 静态成员可以直接继承
+4. 只要一个表达式能够返回一个具有 [[Construct]] 属性以及原型的函数，你就可以对其使用 extends 。</p>
+
       </div>
 
       <footer>
