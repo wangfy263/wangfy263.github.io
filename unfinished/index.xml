@@ -25,24 +25,6 @@ promise和async/await捕获异常方式
     </item>
     
     <item>
-      <title>手动实现一个promise/A&#43;</title>
-      <link>https://wangfy263.github.io/unfinished/%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AApromise-a/</link>
-      <pubDate>Mon, 03 Dec 2018 14:06:06 +0000</pubDate>
-      
-      <guid>https://wangfy263.github.io/unfinished/%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AApromise-a/</guid>
-      <description>开始 用了这么久Promise，今天突然想研究下Promise是怎么实现的，并且自己实现一个。
-准备工作 既然要手动实现一个Promise,那么先看看我们经常使用的Promise是什么样子的；
-使用样例 let promise = new Promise(function(resolve,reject){ resolve(&amp;#34;success&amp;#34;); }) promise.then(function(value){ }, function(reason){ })  从样例上看，Promise是一个构造函数，并且有一个参数excutor，这个参数是一个函数，也有两个函数作为参数，resolve和reject，resolve和reject是Promise内部的两个函数 then方法是原型链上的方法，接收两个入参（函数），这两个函数分别对应Promise的变更为resolve状态和reject状态后要执行的操作；
-除了样例，我们还应该了解下Promise/A+规范。
-Promise/A+规范 全文翻译：
-Promise状态 一个promise必须处于一下三种状态：pending、fulfilled或者rejected。 * pending状态：promise可以转成fulfilled和rejected状态 * fulfilled状态：promise的状态不可变更，并且必须有一个值，且这个值不能被改变； * rejected状态： promise的状态不可变更，并且必须有一个原因，且这个原因不可改变；
-then方法 promise必须包含一个then方法来访问它当前或者最终的值或者原因。 Promise的then方法接收两个参数：promise.then(onFulfilled, onRejected) * onFulfilled和onRejected必须是一个函数； * onFulfilled在promise到fulfilled状态后触发，promise的值是它的第一个参数。（onFulfilled只能触发一次，且在promise状态变成fulfilled之前不能触发） * onRejected在promise到rejected状态后触发，promise的原因是它的第一个参数。（onRejected只能触发一次，且在promise状态变成rejected之前不能触发） * then方法可能在相同的promise中被调用多次。onFulfilled和onRejected必须按照原有顺序进行调用执行；
-这里先列举基础的部分；
-promise实现&amp;mdash;part 1 从上面的信息我们可以模拟出Promise的基本结构
-const PENDING = &amp;#34;pending&amp;#34;; const RESOLVED = &amp;#34;fulfilled&amp;#34;; const REJECTED = &amp;#34;rejected&amp;#34;; function Promise(excutor){ const that = this; that.status = PENDING; // 初始状态为pending  that.</description>
-    </item>
-    
-    <item>
       <title>神经网络梯度下降训练模型</title>
       <link>https://wangfy263.github.io/unfinished/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/</link>
       <pubDate>Sat, 28 Jul 2018 08:29:35 +0000</pubDate>

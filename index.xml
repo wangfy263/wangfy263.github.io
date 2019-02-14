@@ -6,10 +6,51 @@
     <description>Recent content on Wang</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn</language>
-    <lastBuildDate>Fri, 25 Jan 2019 15:30:12 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 12 Feb 2019 15:55:19 +0000</lastBuildDate>
     
 	<atom:link href="https://wangfy263.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>【转】Promise/A&#43;规范</title>
+      <link>https://wangfy263.github.io/posts/promisea&#43;%E8%A7%84%E8%8C%83/</link>
+      <pubDate>Tue, 12 Feb 2019 15:55:19 +0000</pubDate>
+      
+      <guid>https://wangfy263.github.io/posts/promisea&#43;%E8%A7%84%E8%8C%83/</guid>
+      <description>这是一篇转自网络的Promise/A+规范的翻译，原文地址：https://segmentfault.com/a/1190000016411620
+Promise/A+规范原文地址：https://promisesaplus.com/
+记录在这里方便自己查阅参考:
+翻译内容 一个标准声明、可操作的JavaScript Promise——出自开发者，为了开发者。
+一个promise代表一个异步操作的最终结果。与promise交互的主要方法是通过它的then函数。这个函数注册一个回调函数来接收promise最终的值（value）或者是没有成功的原因（reason）。
+这篇文档详细说明了then方法的具体行为，它为所有的符合Promise/A+规范的实现提供了一个基础的交互。像这样，这个规范应该设计的非常稳定。尽管Promise/A+组织可能偶尔通过一些向后兼容的小修改来调整这个文档来适应新发现的场景，我们只会在经历过了小心的思考、讨论和测试后增加大的、不向后兼容的修改。
+从历史上来看，Promise/A+阐述了更早的Promise/A的行为规范，并且在其基础上进行了扩展，覆盖了一些实际行为和之前遗漏的问题。
+最终，核心的Promise/A+文档不关心如何去创建、完成（resolve）或者拒绝（reject）一个Promise，而是聚焦在提供一个可交互的then函数。在将来的其他规范中可能会涉及这些没有提及的内容。
+1. 术语 1.1. &amp;ldquo;promise&amp;rdquo;是一个对象或者函数，它拥有一个符合文档中描述行为的then方法。
+1.2. &amp;ldquo;thenable&amp;rdquo;是一个有then方法的对象或者函数。
+1.3. &amp;ldquo;value&amp;rdquo;是一个合法的JavaScript值（包括undefined, 一个thenable或者一个promise）。
+1.4. &amp;ldquo;exception&amp;rdquo;是一个使用在throw语句中的抛出来的值。
+1.5. &amp;ldquo;reason&amp;rdquo;是一个用来表示promise拒绝的原因的值。
+2. 要求 2.1promise状态 一个promise必须处于一下三种状态：pending、fulfilled或者rejected。 2.1.1. 当处于pending状态时，promise：
+2.1.1.1. 可能会转换成任何其他的状态。
+2.1.2. 当处于fulfilled状态时，promise：
+2.1.2.1. 禁止转换成其他状态。
+2.1.2.2. 必须有一个无法更改的值。
+2.1.3. 当处于rejected状态时，promise：
+2.1.3.1. 禁止转换成其他状态。
+2.1.3.2. 必须有一个无法更改的原因。
+在这里，无法更改意味着全等（例如===），但是不代表深比较相等。
+2.2 then方法 promise必须包含一个then方法来访问它当前或者最终的值或者原因。
+Promise的then方法接收两个参数：
+promise.then(onFulfilled, onRejected)  2.2.1. onFulfilled和onRejected函数有都有可选的参数：
+2.2.1.1. 如果onFulfilled不是一个函数，那么它必须被忽略掉。
+2.2.1.2. 如果onRejected不是一个函数，那么它必须被忽略掉。
+2.2.2. 如果onFulfilled是一个函数：
+2.2.2.1. 它必须在promise到fulfilled状态后触发，promise的值是它的第一个参数。
+2.2.2.2. 它在一个promise到fulfilled状态之前禁止被触发。
+2.2.2.3. 它禁止被触发多次。
+2.2.3. 如果onRejected是一个函数：
+2.2.3.1. 它必须在promise到rejected状态后触发，promise的原因是它的第一个参数。</description>
+    </item>
     
     <item>
       <title>易问web版浏览器支持方案分析</title>
@@ -87,20 +128,20 @@ function SuperType(){ this.property = true; } SuperType.</description>
     
     <item>
       <title>手动实现一个promise/A&#43;</title>
-      <link>https://wangfy263.github.io/unfinished/%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AApromise-a/</link>
+      <link>https://wangfy263.github.io/posts/%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AApromise-a/</link>
       <pubDate>Mon, 03 Dec 2018 14:06:06 +0000</pubDate>
       
-      <guid>https://wangfy263.github.io/unfinished/%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AApromise-a/</guid>
+      <guid>https://wangfy263.github.io/posts/%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AApromise-a/</guid>
       <description>开始 用了这么久Promise，今天突然想研究下Promise是怎么实现的，并且自己实现一个。
 准备工作 既然要手动实现一个Promise,那么先看看我们经常使用的Promise是什么样子的；
 使用样例 let promise = new Promise(function(resolve,reject){ resolve(&amp;#34;success&amp;#34;); }) promise.then(function(value){ }, function(reason){ })  从样例上看，Promise是一个构造函数，并且有一个参数excutor，这个参数是一个函数，也有两个函数作为参数，resolve和reject，resolve和reject是Promise内部的两个函数 then方法是原型链上的方法，接收两个入参（函数），这两个函数分别对应Promise的变更为resolve状态和reject状态后要执行的操作；
 除了样例，我们还应该了解下Promise/A+规范。
-Promise/A+规范 全文翻译：
-Promise状态 一个promise必须处于一下三种状态：pending、fulfilled或者rejected。 * pending状态：promise可以转成fulfilled和rejected状态 * fulfilled状态：promise的状态不可变更，并且必须有一个值，且这个值不能被改变； * rejected状态： promise的状态不可变更，并且必须有一个原因，且这个原因不可改变；
-then方法 promise必须包含一个then方法来访问它当前或者最终的值或者原因。 Promise的then方法接收两个参数：promise.then(onFulfilled, onRejected) * onFulfilled和onRejected必须是一个函数； * onFulfilled在promise到fulfilled状态后触发，promise的值是它的第一个参数。（onFulfilled只能触发一次，且在promise状态变成fulfilled之前不能触发） * onRejected在promise到rejected状态后触发，promise的原因是它的第一个参数。（onRejected只能触发一次，且在promise状态变成rejected之前不能触发） * then方法可能在相同的promise中被调用多次。onFulfilled和onRejected必须按照原有顺序进行调用执行；
-这里先列举基础的部分；
+Promise/A+规范 全文翻译：Promise/A+规范
+Promise状态 一个promise必须处于一下三种状态：pending、fulfilled或者rejected。
+ pending状态：promise可以转成fulfilled和rejected状态 fulfilled状态：promise的状态不可变更，并且必须有一个值，且这个值不能被改变； rejected状态： promise的状态不可变更，并且必须有一个原因，且这个原因不可改变；  then方法 promise必须包含一个then方法来访问它当前或者最终的值或者原因。 Promise的then方法接收两个参数：promise.then(onFulfilled, onRejected)
+ onFulfilled和onRejected必须是一个函数； onFulfilled在promise到fulfilled状态后触发，promise的值是它的第一个参数。（onFulfilled只能触发一次，且在promise状态变成fulfilled之前不能触发） onRejected在promise到rejected状态后触发，promise的原因是它的第一个参数。（onRejected只能触发一次，且在promise状态变成rejected之前不能触发） then方法可能在相同的promise中被调用多次。onFulfilled和onRejected必须按照原有顺序进行调用执行；  这里先列举基础的部分；
 promise实现&amp;mdash;part 1 从上面的信息我们可以模拟出Promise的基本结构
-const PENDING = &amp;#34;pending&amp;#34;; const RESOLVED = &amp;#34;fulfilled&amp;#34;; const REJECTED = &amp;#34;rejected&amp;#34;; function Promise(excutor){ const that = this; that.status = PENDING; // 初始状态为pending  that.</description>
+const PENDING = &amp;#34;pending&amp;#34;; const RESOLVED = &amp;#34;fulfilled&amp;#34;; const REJECTED = &amp;#34;rejected&amp;#34;; function Promise(excutor){ const that = this; that.status = PENDING; // 初始状态为pending  that.value = undefined; // 成功后的返回值  that.</description>
     </item>
     
     <item>
@@ -320,12 +361,12 @@ CMS系统已经向前迈了一大步，但仍存在不少问题： 1. 比较笨�
       <guid>https://wangfy263.github.io/posts/gitflow%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C/</guid>
       <description>背景： 公司一直使用svn做版本管控，项目一般只有两个分支，开发区和发布区，开发人员在开发过程中提交代码，然后在测试部署环境，测试通过后将代码同步至发布区，从发布区打包上线到生产环境；
 前端项目现在多采用MVVM架构，每次上线需要全量打包，再加上多人协作的场景下，svn的管控模式已经难以满足复杂的场景；
-先分析下问题所在： 1、开发人员多，每个人都在发布区提交代码，发布区的代码经常出现一更新就无法运行，只能先一一排错；同时测试环境沦为鸡肋，因为没有对应的稳定版本； 2、并行开发的版本多，同时有3个以上的需求在开发，但上线的时间并不一致，导致开发区的代码无法作为测试版本，只能由开发人员自己提交发布区，测试人员在发布区打包上线并测试；发布区沦为测试区； 3、前端项目无法增量上线，每次上线需要发布人全量打包，发布区版本由发布人员认为管控，上线日需要多次打包测试；
-因此考虑引入Git作为版本管理工具，对开发上线流程进行管理；
+先分析下问题所在：  开发人员多，每个人都在发布区提交代码，发布区的代码经常出现一更新就无法运行，只能先一一排错；同时测试环境沦为鸡肋，因为没有对应的稳定版本； 并行开发的版本多，同时有3个以上的需求在开发，但上线的时间并不一致，导致开发区的代码无法作为测试版本，只能由开发人员自己提交发布区，测试人员在发布区打包上线并测试；发布区沦为测试区； 前端项目无法增量上线，每次上线需要发布人全量打包，发布区版本由发布人员认为管控，上线日需要多次打包测试；  因此考虑引入Git作为版本管理工具，对开发上线流程进行管理；
 Git的优点  由于是分布式，所有本地库包含了远程库的所有内容。 优秀的分支模型，打分支以及合并分支，极其方便。 快速，Git由于代码都在本地，打分支和合并分支及其快速  但即使是Git，没有一套规范约束，随着项目周期变长，参与人员变多，依旧会出现各种问题；
 Gitflow 就像代码需要代码规范一样，代码管理同样需要一个清晰的流程和规范
 Gitflow工作流通过为功能开发, 发布准备和维护分配独立的分支, 让发布迭代过程更流畅. 严格的分支模型也为大型项目提供了一些非常必要的结构.
-Gitflow工作流没有用超出功能分支工作流的概念和命令, 而是为不同的分支分配一个很明确的角色, 并定义分支之间如何和什么时候进行交互. 主要分支:  Master(绿色): 主分支，保持稳定，不允许直接提交代码，只能从release分支和hotfix分支发起merge请求 Develop(橙色): 开发分支，相对稳定，代码优化以及功能性开发；  辅助分支:  Feature(蓝色): 开发新功能都从 develop 分支新建出来，完成后合并（merge）回 develop分支； Release(黄色): 准备要 release 的版本，只修改 bug。从 develop 分支出来，完成后 merge 回 master 和 develop Hotfix(灰色): 修复bug分支，等不及 release 版本就必须马上修复 master 赶上线的情况。会从 master 分支出来，完成后 merge 回 master 和 develop  在实际使用中，根据现场的情况，做了一些调整： 1. master分支，有版本管理人员负责，每次上线需要对master分支打版本tag；master需要时刻和生产环境保持一致，合并master分支由1-2个管理员负责，开发人员不可以直接提交到master分支； 2. develop分支，与测试环境保持一致；不在develop分支直接开发，尽可能以功能分支合并的形式更新develop分支，保证develop分支可用性；后期将加入持续集成，develop分支的稳定是持续集成的前提条件； 3.</description>
+Gitflow工作流没有用超出功能分支工作流的概念和命令, 而是为不同的分支分配一个很明确的角色, 并定义分支之间如何和什么时候进行交互. 主要分支:  Master(绿色): 主分支，保持稳定，不允许直接提交代码，只能从release分支和hotfix分支发起merge请求 Develop(橙色): 开发分支，相对稳定，代码优化以及功能性开发；  辅助分支:  Feature(蓝色): 开发新功能都从 develop 分支新建出来，完成后合并（merge）回 develop分支； Release(黄色): 准备要 release 的版本，只修改 bug。从 develop 分支出来，完成后 merge 回 master 和 develop Hotfix(灰色): 修复bug分支，等不及 release 版本就必须马上修复 master 赶上线的情况。会从 master 分支出来，完成后 merge 回 master 和 develop  在实际使用中，根据现场的情况，做了一些调整：
+ master分支，有版本管理人员负责，每次上线需要对master分支打版本tag；master需要时刻和生产环境保持一致，合并master分支由1-2个管理员负责，开发人员不可以直接提交到master分支； develop分支，与测试环境保持一致；不在develop分支直接开发，尽可能以功能分支合并的形式更新develop分支，保证develop分支可用性；后期将加入持续集成，develop分支的稳定是持续集成的前提条件； feature分支，是开发人员主要开发的分支，建议按照功能点来新建分支，每个功能是一个分支，开发人员自测要在feature分支完成，自测通过后，在上线周期内merge到develop分支，提交由测试人员测试； 测试人员在测试环境测试出bug，指定开发人员需要基于develop新建release分支，开发人员在release分支修复bug，而后merge回develop分支，测试人员再进行测试； 测试人员测试通过后，将release分支merge到master分支，进行上线发布； 上线后，再次出现bug，需要开发人员在master分支基础上，新建hotfix分支，修复bug，修复后，merge到develop分支测试，测试通过后再merge到master分支，重新上线发布； 如果上线失败（出现未能解决的bug，或者因为用户层面的原因）发布人员从master分支回退到上一个tag版本，然后执行上线回退； release分支和hotfix分支在bug修复后要删除，下次修复新bug时再新建分支，修复bug需要在最新的分支版本上进行；  上图是我的分支列表，由于正在开发世界杯的相关功能，因此当前处在世界杯功能分支（feature/worldCup）,红色的部分是远程分支，可以看到feature分支有4个，对应的是正在开发的4个功能；</description>
     </item>
     
     <item>

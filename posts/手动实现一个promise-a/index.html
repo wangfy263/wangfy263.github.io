@@ -12,9 +12,15 @@
     <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="手动实现一个promise/A&#43;"/>
 <meta name="twitter:description" content="开始 用了这么久Promise，今天突然想研究下Promise是怎么实现的，并且自己实现一个。
-准备工作 既然要手动实现一个Promise/A&#43;的规范，那么首先需要知道这个规范的详细内容；
-Promise/A&#43;规范 Promise状态 一个Promise必须在其中之一的状态： pending， fulfilled或rejected * pending状态：promise可以转成fulfilled和rejected状态 * fulfilled状态：promise的状态不可变更，并且必须有一个值，且这个值不能被改变； * rejected状态： promise的状态不可变更，并且必须有一个原因，且这个原因不可改变；
-then方法 一个Promise必须提供一个then"/>
+准备工作 既然要手动实现一个Promise,那么先看看我们经常使用的Promise是什么样子的；
+使用样例 let promise = new Promise(function(resolve,reject){ resolve(&#34;success&#34;); }) promise.then(function(value){ }, function(reason){ })  从样例上看，Promise是一个构造函数，并且有一个参数excutor，这个参数是一个函数，也有两个函数作为参数，resolve和reject，resolve和reject是Promise内部的两个函数 then方法是原型链上的方法，接收两个入参（函数），这两个函数分别对应Promise的变更为resolve状态和reject状态后要执行的操作；
+除了样例，我们还应该了解下Promise/A&#43;规范。
+Promise/A&#43;规范 全文翻译：Promise/A&#43;规范
+Promise状态 一个promise必须处于一下三种状态：pending、fulfilled或者rejected。
+ pending状态：promise可以转成fulfilled和rejected状态 fulfilled状态：promise的状态不可变更，并且必须有一个值，且这个值不能被改变； rejected状态： promise的状态不可变更，并且必须有一个原因，且这个原因不可改变；  then方法 promise必须包含一个then方法来访问它当前或者最终的值或者原因。 Promise的then方法接收两个参数：promise.then(onFulfilled, onRejected)
+ onFulfilled和onRejected必须是一个函数； onFulfilled在promise到fulfilled状态后触发，promise的值是它的第一个参数。（onFulfilled只能触发一次，且在promise状态变成fulfilled之前不能触发） onRejected在promise到rejected状态后触发，promise的原因是它的第一个参数。（onRejected只能触发一次，且在promise状态变成rejected之前不能触发） then方法可能在相同的promise中被调用多次。onFulfilled和onRejected必须按照原有顺序进行调用执行；  这里先列举基础的部分；
+promise实现&mdash;part 1 从上面的信息我们可以模拟出Promise的基本结构
+const PENDING = &#34;pending&#34;; const RESOLVED = &#34;fulfilled&#34;; const REJECTED = &#34;rejected&#34;; function Promise(excutor){ const that = this; that.status = PENDING; // 初始状态为pending  that.value = undefined; // 成功后的返回值  that."/>
 
 
     <base href="https://wangfy263.github.io/posts/%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AApromise-a/">
@@ -119,7 +125,7 @@ then方法 一个Promise必须提供一个then"/>
             </span>
             <span class="reading-time">
               <i class="fas fa-clock"></i>
-              One minute read
+              7 minutes read
             </span>
           </div>
           
@@ -136,20 +142,613 @@ then方法 一个Promise必须提供一个then"/>
 
 <h2 id="准备工作">准备工作</h2>
 
-<p>既然要手动实现一个Promise/A+的规范，那么首先需要知道这个规范的详细内容；</p>
+<p>既然要手动实现一个Promise,那么先看看我们经常使用的Promise是什么样子的；</p>
+
+<h3 id="使用样例">使用样例</h3>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#fff;font-weight:bold">let</span> promise = <span style="color:#fff;font-weight:bold">new</span> <span style="color:#fff;font-weight:bold">Promise</span>(<span style="color:#fff;font-weight:bold">function</span>(resolve,reject){
+    resolve(<span style="color:#0ff;font-weight:bold">&#34;success&#34;</span>); 
+})
+promise.then(<span style="color:#fff;font-weight:bold">function</span>(value){
+
+}, <span style="color:#fff;font-weight:bold">function</span>(reason){
+
+})
+</code></pre></div>
+<p>从样例上看，Promise是一个构造函数，并且有一个参数excutor，这个参数是一个函数，也有两个函数作为参数，resolve和reject，resolve和reject是Promise内部的两个函数
+then方法是原型链上的方法，接收两个入参（函数），这两个函数分别对应Promise的变更为resolve状态和reject状态后要执行的操作；</p>
+
+<p>除了样例，我们还应该了解下Promise/A+规范。</p>
 
 <h2 id="promise-a-规范">Promise/A+规范</h2>
 
+<p>全文翻译：<a href="https://wangfy263.github.io/posts/promisea+规范">Promise/A+规范</a></p>
+
 <h3 id="promise状态">Promise状态</h3>
 
-<p>一个Promise必须在其中之一的状态： pending， fulfilled或rejected
-* pending状态：promise可以转成fulfilled和rejected状态
-* fulfilled状态：promise的状态不可变更，并且必须有一个值，且这个值不能被改变；
-* rejected状态： promise的状态不可变更，并且必须有一个原因，且这个原因不可改变；</p>
+<p>一个promise必须处于一下三种状态：pending、fulfilled或者rejected。</p>
+
+<ul>
+<li>pending状态：promise可以转成fulfilled和rejected状态</li>
+<li>fulfilled状态：promise的状态不可变更，并且必须有一个值，且这个值不能被改变；</li>
+<li>rejected状态： promise的状态不可变更，并且必须有一个原因，且这个原因不可改变；</li>
+</ul>
 
 <h3 id="then方法">then方法</h3>
 
-<p>一个Promise必须提供一个then</p>
+<p>promise必须包含一个then方法来访问它当前或者最终的值或者原因。
+Promise的then方法接收两个参数：promise.then(onFulfilled, onRejected)</p>
+
+<ul>
+<li>onFulfilled和onRejected必须是一个函数；</li>
+<li>onFulfilled在promise到fulfilled状态后触发，promise的值是它的第一个参数。（onFulfilled只能触发一次，且在promise状态变成fulfilled之前不能触发）</li>
+<li>onRejected在promise到rejected状态后触发，promise的原因是它的第一个参数。（onRejected只能触发一次，且在promise状态变成rejected之前不能触发）</li>
+<li>then方法可能在相同的promise中被调用多次。onFulfilled和onRejected必须按照原有顺序进行调用执行；</li>
+</ul>
+
+<p>这里先列举基础的部分；</p>
+
+<h2 id="promise实现-part-1">promise实现&mdash;part 1</h2>
+
+<p>从上面的信息我们可以模拟出Promise的基本结构</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#fff;font-weight:bold">const</span> PENDING = <span style="color:#0ff;font-weight:bold">&#34;pending&#34;</span>;
+<span style="color:#fff;font-weight:bold">const</span> RESOLVED = <span style="color:#0ff;font-weight:bold">&#34;fulfilled&#34;</span>;
+<span style="color:#fff;font-weight:bold">const</span> REJECTED = <span style="color:#0ff;font-weight:bold">&#34;rejected&#34;</span>;
+<span style="color:#fff;font-weight:bold">function</span> <span style="color:#fff;font-weight:bold">Promise</span>(excutor){
+    <span style="color:#fff;font-weight:bold">const</span> that = <span style="color:#fff;font-weight:bold">this</span>;
+    that.status = PENDING;    <span style="color:#007f7f">// 初始状态为pending
+</span><span style="color:#007f7f"></span>    that.value = <span style="color:#fff;font-weight:bold">undefined</span>;   <span style="color:#007f7f">// 成功后的返回值
+</span><span style="color:#007f7f"></span>    that.reason = <span style="color:#fff;font-weight:bold">undefined</span>;  <span style="color:#007f7f">// 失败的原因
+</span><span style="color:#007f7f"></span>    that.onFullfilledList = [];  <span style="color:#007f7f">// 存放onFullfilled函数的列表，当promise处于pending状态时，多次调用then，会有多个onFullfilled函数待执行
+</span><span style="color:#007f7f"></span>    that.onRejectedList = [];   <span style="color:#007f7f">// 存放onRejected函数的列表，当promise处于pending状态时，多次调用then，会有多个onFullfilled函数待执行
+</span><span style="color:#007f7f"></span>    <span style="color:#fff;font-weight:bold">function</span> resolve(value){
+        <span style="color:#fff;font-weight:bold">if</span>(that.status === PENDING) {
+            that.status = RESOLVED;
+            that.value = value;
+            that.onFullfilledList.forEach(<span style="color:#fff;font-weight:bold">function</span>(fullfilled){
+                fullfilled(value);
+            })
+        }
+    }
+    <span style="color:#fff;font-weight:bold">function</span> reject(reason){
+        <span style="color:#fff;font-weight:bold">if</span> (<span style="color:#fff;font-weight:bold">this</span>.state === PENDING) {
+            that.status = REJECTED;
+            that.reason = reason;
+            that.onRejectedList.forEach(<span style="color:#fff;font-weight:bold">function</span>(rejected){
+                rejected(reason);
+            })
+        }
+    }
+    <span style="color:#fff;font-weight:bold">try</span>{
+        excutor(resolve, reject)  <span style="color:#007f7f">//立刻执行传入的函数
+</span><span style="color:#007f7f"></span>    }<span style="color:#fff;font-weight:bold">catch</span>(err){
+        reject(err)  <span style="color:#007f7f">// 执行过程抛出异常，则以异常原因拒绝promise
+</span><span style="color:#007f7f"></span>    }
+}
+<span style="color:#fff;font-weight:bold">Promise</span>.prototype.then = <span style="color:#fff;font-weight:bold">function</span>(onFullfilled, onRejected) {  <span style="color:#007f7f">// then方法在原型链上
+</span><span style="color:#007f7f"></span>    <span style="color:#fff;font-weight:bold">if</span>(<span style="color:#fff;font-weight:bold">this</span>.status === RESOLVED &amp;&amp; <span style="color:#fff;font-weight:bold">typeof</span> onFullfilled === <span style="color:#0ff;font-weight:bold">&#34;function&#34;</span>){
+        onFullfilled(<span style="color:#fff;font-weight:bold">this</span>.value);  <span style="color:#007f7f">// fulfilled状态则立即执行onFullfilled函数
+</span><span style="color:#007f7f"></span>    }
+    <span style="color:#fff;font-weight:bold">if</span>(<span style="color:#fff;font-weight:bold">this</span>.status === REJECTED &amp;&amp; <span style="color:#fff;font-weight:bold">typeof</span> onRejected === <span style="color:#0ff;font-weight:bold">&#34;function&#34;</span>){
+        onRejected(<span style="color:#fff;font-weight:bold">this</span>.reason);  <span style="color:#007f7f">// rejected状态则立即执行onRejected函数
+</span><span style="color:#007f7f"></span>    }
+    <span style="color:#fff;font-weight:bold">if</span>(<span style="color:#fff;font-weight:bold">this</span>.status === PENDING){
+        <span style="color:#fff;font-weight:bold">if</span>(<span style="color:#fff;font-weight:bold">typeof</span> onFullfilled === <span style="color:#0ff;font-weight:bold">&#34;function&#34;</span>){
+            <span style="color:#fff;font-weight:bold">this</span>.onFullfilledList.push(onFullfilled);  <span style="color:#007f7f">// 注册onFullfilled
+</span><span style="color:#007f7f"></span>        }
+        <span style="color:#fff;font-weight:bold">if</span>(<span style="color:#fff;font-weight:bold">typeof</span> onRejected === <span style="color:#0ff;font-weight:bold">&#34;function&#34;</span>){
+            <span style="color:#fff;font-weight:bold">this</span>.onRejectedList.push(onRejected);     <span style="color:#007f7f">// 注册onRejected
+</span><span style="color:#007f7f"></span>        }
+    }
+}
+</code></pre></div>
+<p>这样基本满足了上面所列的规范中的基础点，但规范中的要求还有很多；</p>
+
+<h2 id="promise实现-part-2">promise实现&mdash;part 2</h2>
+
+<p>规范中还对then方法有约束：</p>
+
+<ul>
+<li>then方法必须返回一个promise： promise2 = promise1.then(onFulfilled, onRejected); *<strong>promise可以链式调用的关键</strong></li>
+<li>如果onFulfilled或者onRejected方法返回一个值x，那么执行promise的解析过程 <a href="https://wangfy263.github.io/posts/promisea+规范">解析函数规范-2.3章节</a></li>
+<li>如果onFulfilled或者onRejected方法抛出一个异常e，promise2必须使用e作为原因拒绝掉（rejected）。</li>
+<li>如果onFulfilled不是一个函数并且promise1到了fulfilled状态，那么promise2必须在与promise1的值相同的情况下转换到fulfilled状态。</li>
+<li>如果onRejected不是一个函数并且promise1到了rejected状态，那么promise2必须在与promise1的原因相同的情况下转换到rejected状态。</li>
+</ul>
+
+<p>先忽略解析过程，实现其他规范要求：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#fff;font-weight:bold">Promise</span>.prototype.then = <span style="color:#fff;font-weight:bold">function</span>(onFullfilled, onRejected) {
+    <span style="color:#fff;font-weight:bold">let</span> that = <span style="color:#fff;font-weight:bold">this</span>;
+    <span style="color:#fff;font-weight:bold">let</span> promise = <span style="color:#fff;font-weight:bold">new</span> <span style="color:#fff;font-weight:bold">Promise</span>(<span style="color:#fff;font-weight:bold">function</span>(resolve, reject){
+        <span style="color:#007f7f">// 把onFullfilled和onRejected不是函数的情况单独处理，减少if..else
+</span><span style="color:#007f7f"></span>        onFullfilled = <span style="color:#fff;font-weight:bold">typeof</span> onFullfilled === <span style="color:#0ff;font-weight:bold">&#39;function&#39;</span> ? onFullfilled : <span style="color:#fff;font-weight:bold">function</span>(value){resolve(value)}
+        onRejected = <span style="color:#fff;font-weight:bold">typeof</span> onRejected === <span style="color:#0ff;font-weight:bold">&#39;function&#39;</span> ? onRejected : <span style="color:#fff;font-weight:bold">function</span>(reason){reject(reason)}
+        <span style="color:#fff;font-weight:bold">try</span>{
+            <span style="color:#fff;font-weight:bold">if</span>(that.status === RESOLVED){
+                <span style="color:#fff;font-weight:bold">let</span> x = onFullfilled(that.value);  <span style="color:#007f7f">// fulfilled状态则立即执行onFullfilled函数
+</span><span style="color:#007f7f"></span>                <span style="color:#007f7f">// TODO 解析函数
+</span><span style="color:#007f7f"></span>                analysisPromise(promise, x, resolve, reject) <span style="color:#007f7f">//这里直接传入promise会抛异常，因为promise并没有定义
+</span><span style="color:#007f7f"></span>            }
+            <span style="color:#fff;font-weight:bold">if</span>(that.status === REJECTED){
+                <span style="color:#fff;font-weight:bold">let</span> x = onRejected(that.reason); 
+                <span style="color:#007f7f">// TODO 解析函数
+</span><span style="color:#007f7f"></span>                analysisPromise(promise, x, resolve, reject)
+            }
+            <span style="color:#fff;font-weight:bold">if</span>(that.status === PENDING){
+                that.onFullfilledList.push(<span style="color:#fff;font-weight:bold">function</span>(){<span style="color:#007f7f">// 这里需要在onFullfilled函数之外包一层
+</span><span style="color:#007f7f"></span>                    <span style="color:#fff;font-weight:bold">let</span> x = onFullfilled(that.value);
+                    <span style="color:#007f7f">// TODO 解析函数
+</span><span style="color:#007f7f"></span>                    analysisPromise(promise, x, resolve, reject)
+                });
+                that.onRejectedList.push(<span style="color:#fff;font-weight:bold">function</span>(){
+                    <span style="color:#fff;font-weight:bold">let</span> x = onRejected(that.reason);  
+                    <span style="color:#007f7f">// TODO 解析函数
+</span><span style="color:#007f7f"></span>                    analysisPromise(promise, x, resolve, reject)
+                });
+            }
+        }<span style="color:#fff;font-weight:bold">catch</span>(err){
+            reject(err)
+        }
+    })
+    <span style="color:#fff;font-weight:bold">return</span> promise
+}
+</code></pre></div>
+<p>上面的实现，满足了除解析流程以外的其他规范，下面来详细实现解析函数analysisPromise;</p>
+
+<h2 id="promise实现-part-3">promise实现&mdash;part 3</h2>
+
+<p>在Promise/A+规范中，解析函数是这样规定的：<a href="https://wangfy263.github.io/posts/promisea+规范">解析函数规范-2.3章节</a></p>
+
+<p>内容有点多，我试着按自己的理解总结一下：<br>
+<strong>解析函数需要两个入参，一个then方法即将作为返回的promise，一个是onFullfilled或onRejected返回的对象x;</strong><br>
+然后，对x进行处理：</p>
+
+<ul>
+<li>情况一： 当x和promise指向同一对象，则抛出异常；<strong>因为这样会造成循环引用</strong>；例如：</li>
+</ul>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#fff;font-weight:bold">let</span> p = <span style="color:#fff;font-weight:bold">new</span> <span style="color:#fff;font-weight:bold">Promise</span>(resolve =&gt; {
+  resolve(<span style="color:#ff0;font-weight:bold">0</span>);
+});
+<span style="color:#fff;font-weight:bold">var</span> p2 = p.then(data =&gt; {
+  <span style="color:#007f7f">// 循环引用
+</span><span style="color:#007f7f"></span>  <span style="color:#fff;font-weight:bold">return</span> p2;
+})
+</code></pre></div>
+<ul>
+<li><p>情况二： 当x不是一个对象或函数时，那么就用x完成promise；</p></li>
+
+<li><p>情况三， 如果x是一个promise，就判断它的状态<br>
+这里有个问题，怎么判断x是一个promise呢？<strong>这里实际上js中是没有办法准确判断x是否是promise对象，只能假定x具有和promise类似的行为，也就是规范中所说的thenable对象，尝试将promise转换为x的状态；如果失败就reject</strong>
+<br>这就是下面的情况四；</p></li>
+
+<li><p>情况四， 如果x是一个对象或者函数，规范中明确规定要*<strong>then = x.then</strong></p>
+
+<ul>
+<li>then不是函数，就直接用x完成promise；*<strong>x不是一个thenable对象</strong></li>
+<li>检测then的过程抛出异常，那就把这个异常当做原因拒绝promise； *<strong>then函数不符合promise规范</strong></li>
+<li>如果then是一个函数，那么用x作为this来调用它，第一个参数是resolvePromise，第二个参数是rejectPromise：*<strong>用call执行then，指定this为x</strong></li>
+<li>如果resolvePromise被值y调用，那么运行<a href="promise, y">[Resolve]</a>。*<strong>如果x被解决（resolve），并且值为y，也就是执行了resolvePromise，那么就对y继续进行解析；重复上面流程；</strong></li>
+<li>如果rejectPromise被原因r触发，那么用r来拒绝promise。*<strong>如果x被拒绝（reject），并且原因是r，也就是执行了rejectPromise，那么就用r把promise拒绝；</strong></li>
+<li>如果resolvePromise和rejectPromise都被调用，或者使用相同的参数多次调用，那么第一次调用生效，其他之后的任何调用都忽略掉。*<strong>resolvePromise和rejectPromise只能被调用一次</strong></li>
+<li>如果在调用then方法时抛出了一个异常e,如果resolvePromise和rejectPromise已经被调用了那么就忽略掉它。否则，使用e作为原因拒绝promise。*<strong>catch的异常要根据resolvePromise和rejectPromise的调用情况处理</strong></li>
+</ul></li>
+</ul>
+
+<p>从上面的规范可以看出来，<strong>解析函数的重点是为了解决onFullfilled或onRejected中return 另一个promise对象的情况</strong>；
+例如：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#fff;font-weight:bold">let</span> p = <span style="color:#fff;font-weight:bold">new</span> <span style="color:#fff;font-weight:bold">Promise</span>((resolve, reject) =&gt; {
+  reject(<span style="color:#ff0;font-weight:bold">0</span>);
+});
+<span style="color:#fff;font-weight:bold">var</span> p2 = p.then(data =&gt; {
+    <span style="color:#fff;font-weight:bold">let</span> p3 = <span style="color:#fff;font-weight:bold">new</span> <span style="color:#fff;font-weight:bold">Promise</span>((resolve, reject) =&gt; {
+        reject(<span style="color:#ff0;font-weight:bold">99</span>);
+    })
+    <span style="color:#fff;font-weight:bold">return</span> p3;
+}, err =&gt; {
+    <span style="color:#fff;font-weight:bold">let</span> p4 = <span style="color:#fff;font-weight:bold">new</span> <span style="color:#fff;font-weight:bold">Promise</span>((resolve, reject) =&gt; {
+        resolve(<span style="color:#ff0;font-weight:bold">88</span>);
+    })
+    <span style="color:#fff;font-weight:bold">return</span> p4
+})
+console.log(p2)<span style="color:#007f7f">//  fulfilled  88
+</span></code></pre></div>
+<p>因为then方法最终要返回一个新的promise<br>
+如果onFulfilled, onRejected回调函数中返回值，或者不是thenable对象，那么就以x为值变更为fufilled状态；<br>
+如果onFulfilled, onRejected回调函数中返回promise2（或thenable函数），那么调用promise2的then方法，并根据将promise转换成promise2的状态；<br>
+如果promise2的回调函数中仍然返回新的promise对象，则递归执行上一步，直到then方法的回调函数返回的不在是promise；<br></p>
+
+<p>实现如下：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#fff;font-weight:bold">function</span> analysisPromise(promise, x, resolve, reject){
+    <span style="color:#fff;font-weight:bold">if</span>(promise === x) {
+        <span style="color:#fff;font-weight:bold">return</span> reject(<span style="color:#fff;font-weight:bold">new</span> TypeError(<span style="color:#0ff;font-weight:bold">&#34;循环引用&#34;</span>));
+    }
+    <span style="color:#fff;font-weight:bold">if</span>(x === <span style="color:#fff;font-weight:bold">null</span>){
+        <span style="color:#fff;font-weight:bold">return</span> resolve(x)
+    }
+    <span style="color:#fff;font-weight:bold">if</span>(<span style="color:#fff;font-weight:bold">typeof</span> x !== <span style="color:#0ff;font-weight:bold">&#34;object&#34;</span> &amp;&amp; <span style="color:#fff;font-weight:bold">typeof</span> x !== <span style="color:#0ff;font-weight:bold">&#39;function&#39;</span>){
+        <span style="color:#fff;font-weight:bold">return</span> resolve(x);
+    }
+    <span style="color:#fff;font-weight:bold">let</span> called;
+    <span style="color:#fff;font-weight:bold">let</span> then = x.then
+    <span style="color:#fff;font-weight:bold">if</span>(<span style="color:#fff;font-weight:bold">typeof</span> then !== <span style="color:#0ff;font-weight:bold">&#34;function&#34;</span>){
+        <span style="color:#fff;font-weight:bold">return</span> resolve(x);
+    }
+    <span style="color:#fff;font-weight:bold">try</span>{
+        then.call(x, <span style="color:#fff;font-weight:bold">function</span>(y){
+            <span style="color:#fff;font-weight:bold">if</span>(called)<span style="color:#fff;font-weight:bold">return</span>;
+            called = <span style="color:#fff;font-weight:bold">true</span>;   
+            analysisPromise(promise, y, resolve, reject);
+        }, <span style="color:#fff;font-weight:bold">function</span>(r){
+            <span style="color:#fff;font-weight:bold">if</span>(called)<span style="color:#fff;font-weight:bold">return</span>;
+            called = <span style="color:#fff;font-weight:bold">true</span>;
+            reject(r)
+        })
+    }<span style="color:#fff;font-weight:bold">catch</span>(e){
+        <span style="color:#fff;font-weight:bold">if</span>(called)<span style="color:#fff;font-weight:bold">return</span>;
+        called = <span style="color:#fff;font-weight:bold">true</span>;
+        reject(e);
+    }
+}
+</code></pre></div>
+<p>解析函数完成后，整个promise的结构就实现好了。但是调测的时候还是出现了问题：
+then方法中调用解析函数时，出现promise未定义的错误</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#fff;font-weight:bold">Promise</span>.prototype.then = <span style="color:#fff;font-weight:bold">function</span>(onFullfilled, onRejected) {
+    <span style="color:#fff;font-weight:bold">let</span> that = <span style="color:#fff;font-weight:bold">this</span>;
+    <span style="color:#fff;font-weight:bold">let</span> promise = <span style="color:#fff;font-weight:bold">new</span> <span style="color:#fff;font-weight:bold">Promise</span>(<span style="color:#fff;font-weight:bold">function</span>(resolve, reject){
+        onFullfilled = <span style="color:#fff;font-weight:bold">typeof</span> onFullfilled === <span style="color:#0ff;font-weight:bold">&#39;function&#39;</span> ? onFullfilled : <span style="color:#fff;font-weight:bold">function</span>(value){resolve(value)}
+        onRejected = <span style="color:#fff;font-weight:bold">typeof</span> onRejected === <span style="color:#0ff;font-weight:bold">&#39;function&#39;</span> ? onRejected : <span style="color:#fff;font-weight:bold">function</span>(reason){reject(reason)}
+        <span style="color:#fff;font-weight:bold">try</span>{
+            <span style="color:#fff;font-weight:bold">if</span>(that.status === RESOLVED){
+                <span style="color:#fff;font-weight:bold">let</span> x = onFullfilled(that.value);  <span style="color:#007f7f">// fulfilled状态则立即执行onFullfilled函数
+</span><span style="color:#007f7f"></span>                <span style="color:#007f7f">// TODO 解析函数
+</span><span style="color:#007f7f"></span>                analysisPromise(promise, x, resolve, reject) <span style="color:#007f7f">//这里直接传入promise会抛异常，因为promise并没有定义
+</span><span style="color:#007f7f"></span>            }
+            <span style="color:#fff;font-weight:bold">if</span>(that.status === REJECTED){
+                <span style="color:#fff;font-weight:bold">let</span> x = onRejected(that.reason); 
+                <span style="color:#007f7f">// TODO 解析函数
+</span><span style="color:#007f7f"></span>                analysisPromise(promise, x, resolve, reject)
+            }
+            <span style="color:#fff;font-weight:bold">if</span>(that.status === PENDING){
+                that.onFullfilledList.push(<span style="color:#fff;font-weight:bold">function</span>(){<span style="color:#007f7f">// 这里需要在onFullfilled函数之外包一层
+</span><span style="color:#007f7f"></span>                    <span style="color:#fff;font-weight:bold">let</span> x = onFullfilled(that.value);
+                    <span style="color:#007f7f">// TODO 解析函数
+</span><span style="color:#007f7f"></span>                    analysisPromise(promise, x, resolve, reject)
+                });
+                that.onRejectedList.push(<span style="color:#fff;font-weight:bold">function</span>(){
+                    <span style="color:#fff;font-weight:bold">let</span> x = onRejected(that.reason);  
+                    <span style="color:#007f7f">// TODO 解析函数
+</span><span style="color:#007f7f"></span>                    analysisPromise(promise, x, resolve, reject)
+                });
+            }
+        }<span style="color:#fff;font-weight:bold">catch</span>(err){
+            reject(err)
+        }
+    })
+    <span style="color:#fff;font-weight:bold">return</span> promise
+}
+</code></pre></div>
+<p>这是由于let声明变量没有声明提升，实际上此时在new Promise执行的过程中，<strong>promise实例还没有声明</strong>，因此会报not defined；
+这里如果是使用var，那么promise会是undefined；对于我们的流程也有问题，<strong>在调用解析函数时，promise应该是实例才对</strong>；</p>
+
+<p>可以借助setTimeout来解决这个问题。</p>
+
+<p>我是在调试时发现这个问题的，但实际上规范中有这样一条：<em>2.2.4. onFulfilled或者onRejected只有在执行上下文堆栈只有平台代码时才能被触发。</em>
+对于“平台代码”在注意事项中的解释如下：
+<em>3.1. 在这里&rdquo;平台代码&rdquo;（platform code）意味着引擎，环境和promise实现代码。在实践中，这个要求确保了onFulfilled和onRejected是异步执行的，then调用也是在循环之后，有一个新的堆栈信息。这可以通过一个宏任务（macro-task）机制例如setTimeout或者setImmediate来实现，也可以通过一个微任务（micro-task）例如MutationObserver或者process.nextTick来实现。如果promise的实现考虑平台代码，那么它自己可能会带一个任务执行队列或者“蹦床”来处理被调用情况。</em></p>
+
+<p>实际上也说明了，这里确实需要用异步方法执行，性能最好的方式是MutationObserver,在nodejs下则是使用process.nextTick来实现，考虑到更好的兼容性，我这里还是选择了setTimeout;(MutationObserver对IE的支持不好，只支持IE11)</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#fff;font-weight:bold">Promise</span>.prototype.then = <span style="color:#fff;font-weight:bold">function</span>(onFullfilled, onRejected) {
+    <span style="color:#fff;font-weight:bold">let</span> that = <span style="color:#fff;font-weight:bold">this</span>;
+    <span style="color:#fff;font-weight:bold">let</span> promise = <span style="color:#fff;font-weight:bold">new</span> <span style="color:#fff;font-weight:bold">Promise</span>(<span style="color:#fff;font-weight:bold">function</span>(resolve, reject){
+        onFullfilled = <span style="color:#fff;font-weight:bold">typeof</span> onFullfilled === <span style="color:#0ff;font-weight:bold">&#39;function&#39;</span> ? onFullfilled : <span style="color:#fff;font-weight:bold">function</span>(value){resolve(value)}
+        onRejected = <span style="color:#fff;font-weight:bold">typeof</span> onRejected === <span style="color:#0ff;font-weight:bold">&#39;function&#39;</span> ? onRejected : <span style="color:#fff;font-weight:bold">function</span>(reason){reject(reason)}
+        <span style="color:#fff;font-weight:bold">try</span>{
+            <span style="color:#fff;font-weight:bold">if</span>(that.status === RESOLVED){
+                setTimeout(<span style="color:#fff;font-weight:bold">function</span>() =&gt; {
+                    <span style="color:#fff;font-weight:bold">try</span>{
+                        <span style="color:#fff;font-weight:bold">let</span> x = onFullfilled(that.value);  <span style="color:#007f7f">// fulfilled状态则立即执行onFullfilled函数
+</span><span style="color:#007f7f"></span>                        <span style="color:#007f7f">// TODO 解析函数
+</span><span style="color:#007f7f"></span>                        analysisPromise(promise, x, resolve, reject) <span style="color:#007f7f">//这里直接传入promise会抛异常，因为promise并没有定义
+</span><span style="color:#007f7f"></span>                    }<span style="color:#fff;font-weight:bold">catch</span>(e){
+                        reject(e);
+                    }
+                }, <span style="color:#ff0;font-weight:bold">0</span>)
+            }
+            <span style="color:#fff;font-weight:bold">if</span>(that.status === REJECTED){
+                setTimeout(<span style="color:#fff;font-weight:bold">function</span>() =&gt; {
+                    <span style="color:#fff;font-weight:bold">try</span>{
+                        <span style="color:#fff;font-weight:bold">let</span> x = onRejected(that.reason); 
+                        <span style="color:#007f7f">// TODO 解析函数
+</span><span style="color:#007f7f"></span>                        analysisPromise(promise, x, resolve, reject)
+                    }<span style="color:#fff;font-weight:bold">catch</span>(e){
+                        reject(e);
+                    }
+                }, <span style="color:#ff0;font-weight:bold">0</span>)
+            }
+            <span style="color:#fff;font-weight:bold">if</span>(that.status === PENDING){
+                that.onFullfilledList.push(<span style="color:#fff;font-weight:bold">function</span>(){<span style="color:#007f7f">// 这里需要在onFullfilled函数之外包一层
+</span><span style="color:#007f7f"></span>                    setTimeout(<span style="color:#fff;font-weight:bold">function</span>() =&gt; {
+                        <span style="color:#fff;font-weight:bold">try</span>{
+                            <span style="color:#fff;font-weight:bold">let</span> x = onFullfilled(that.value);
+                            <span style="color:#007f7f">// TODO 解析函数
+</span><span style="color:#007f7f"></span>                            analysisPromise(promise, x, resolve, reject)
+                        }<span style="color:#fff;font-weight:bold">catch</span>(e){
+                            reject(e);
+                        }
+                    }, <span style="color:#ff0;font-weight:bold">0</span>)
+                });
+                that.onRejectedList.push(<span style="color:#fff;font-weight:bold">function</span>(){
+                    setTimeout(<span style="color:#fff;font-weight:bold">function</span>() =&gt; {
+                        <span style="color:#fff;font-weight:bold">try</span>{
+                            <span style="color:#fff;font-weight:bold">let</span> x = onRejected(that.reason);  
+                            <span style="color:#007f7f">// TODO 解析函数
+</span><span style="color:#007f7f"></span>                            analysisPromise(promise, x, resolve, reject)
+                        }<span style="color:#fff;font-weight:bold">catch</span>(e){
+                            reject(e);
+                        }
+                    }, <span style="color:#ff0;font-weight:bold">0</span>)
+                });
+            }
+        }<span style="color:#fff;font-weight:bold">catch</span>(err){
+            reject(err)
+        }
+    })
+    <span style="color:#fff;font-weight:bold">return</span> promise
+}
+</code></pre></div>
+<h2 id="最终实现的promise代码">最终实现的Promise代码</h2>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#fff;font-weight:bold">var</span> PENDING = <span style="color:#0ff;font-weight:bold">&#34;pending&#34;</span>;
+<span style="color:#fff;font-weight:bold">var</span> RESOLVED = <span style="color:#0ff;font-weight:bold">&#34;fulfilled&#34;</span>;
+<span style="color:#fff;font-weight:bold">var</span> REJECTED = <span style="color:#0ff;font-weight:bold">&#34;rejected&#34;</span>;
+<span style="color:#fff;font-weight:bold">function</span> <span style="color:#fff;font-weight:bold">Promise</span>(excutor){
+    <span style="color:#fff;font-weight:bold">var</span> that = <span style="color:#fff;font-weight:bold">this</span>;
+    that.status = PENDING;    <span style="color:#007f7f">// 初始状态为pending
+</span><span style="color:#007f7f"></span>    that.value = <span style="color:#fff;font-weight:bold">undefined</span>;
+    that.reason = <span style="color:#fff;font-weight:bold">undefined</span>;
+    that.onFullfilledList = [];  <span style="color:#007f7f">// 存放onFullfilled函数的列表，多次调用then，会有多个onFullfilled函数
+</span><span style="color:#007f7f"></span>    that.onRejectedList = [];   <span style="color:#007f7f">// 作用同上
+</span><span style="color:#007f7f"></span>    <span style="color:#fff;font-weight:bold">function</span> resolve(value){
+        <span style="color:#fff;font-weight:bold">if</span>(that.status === PENDING) {
+            that.status = RESOLVED;
+            that.value = value;
+            that.onFullfilledList.forEach(<span style="color:#fff;font-weight:bold">function</span>(fullfilled){
+                fullfilled(value);
+            })
+        }
+    }
+    <span style="color:#fff;font-weight:bold">function</span> reject(reason){
+        <span style="color:#fff;font-weight:bold">if</span> (that.status === PENDING) {
+            that.status = REJECTED;
+            that.reason = reason;
+            that.onRejectedList.forEach(<span style="color:#fff;font-weight:bold">function</span>(rejected){
+                rejected(reason);
+            })
+        }
+    }
+    <span style="color:#fff;font-weight:bold">try</span>{
+        excutor(resolve, reject)
+    }<span style="color:#fff;font-weight:bold">catch</span>(err){
+        reject(err)
+    }
+}
+<span style="color:#fff;font-weight:bold">Promise</span>.prototype.then = <span style="color:#fff;font-weight:bold">function</span>(onFullfilled, onRejected) {
+    <span style="color:#fff;font-weight:bold">var</span> that = <span style="color:#fff;font-weight:bold">this</span>;
+    <span style="color:#fff;font-weight:bold">var</span> promise = <span style="color:#fff;font-weight:bold">new</span> <span style="color:#fff;font-weight:bold">Promise</span>(<span style="color:#fff;font-weight:bold">function</span>(resolve, reject){
+        onFullfilled = <span style="color:#fff;font-weight:bold">typeof</span> onFullfilled === <span style="color:#0ff;font-weight:bold">&#39;function&#39;</span> ? onFullfilled : <span style="color:#fff;font-weight:bold">function</span>(value){resolve(value)}
+        onRejected = <span style="color:#fff;font-weight:bold">typeof</span> onRejected === <span style="color:#0ff;font-weight:bold">&#39;function&#39;</span> ? onRejected : <span style="color:#fff;font-weight:bold">function</span>(reason){reject(reason)}
+        <span style="color:#fff;font-weight:bold">try</span>{
+            <span style="color:#fff;font-weight:bold">if</span>(that.status === RESOLVED){
+                setTimeout(<span style="color:#fff;font-weight:bold">function</span>() {
+                    <span style="color:#fff;font-weight:bold">try</span>{
+                        <span style="color:#fff;font-weight:bold">var</span> x = onFullfilled(that.value);  <span style="color:#007f7f">// fulfilled状态则立即执行onFullfilled函数
+</span><span style="color:#007f7f"></span>                        <span style="color:#007f7f">// TODO 解析函数
+</span><span style="color:#007f7f"></span>                        analysisPromise(promise, x, resolve, reject) <span style="color:#007f7f">//这里直接传入promise会抛异常，因为promise并没有定义
+</span><span style="color:#007f7f"></span>                    }<span style="color:#fff;font-weight:bold">catch</span>(e){
+                        reject(e);
+                    }
+                }, <span style="color:#ff0;font-weight:bold">0</span>)
+            }
+            <span style="color:#fff;font-weight:bold">if</span>(that.status === REJECTED){
+                setTimeout(<span style="color:#fff;font-weight:bold">function</span>() {
+                    <span style="color:#fff;font-weight:bold">try</span>{
+                        <span style="color:#fff;font-weight:bold">var</span> x = onRejected(that.reason); 
+                        <span style="color:#007f7f">// TODO 解析函数
+</span><span style="color:#007f7f"></span>                        analysisPromise(promise, x, resolve, reject)
+                    }<span style="color:#fff;font-weight:bold">catch</span>(e){
+                        reject(e);
+                    }
+                }, <span style="color:#ff0;font-weight:bold">0</span>)
+            }
+            <span style="color:#fff;font-weight:bold">if</span>(that.status === PENDING){
+                that.onFullfilledList.push(<span style="color:#fff;font-weight:bold">function</span>(){<span style="color:#007f7f">// 这里需要在onFullfilled函数之外包一层
+</span><span style="color:#007f7f"></span>                    setTimeout(<span style="color:#fff;font-weight:bold">function</span>() {
+                        <span style="color:#fff;font-weight:bold">try</span>{
+                            <span style="color:#fff;font-weight:bold">var</span> x = onFullfilled(that.value);
+                            <span style="color:#007f7f">// TODO 解析函数
+</span><span style="color:#007f7f"></span>                            analysisPromise(promise, x, resolve, reject)
+                        }<span style="color:#fff;font-weight:bold">catch</span>(e){
+                            reject(e);
+                        }
+                    }, <span style="color:#ff0;font-weight:bold">0</span>)
+                });
+                that.onRejectedList.push(<span style="color:#fff;font-weight:bold">function</span>(){
+                    setTimeout(<span style="color:#fff;font-weight:bold">function</span>() {
+                        <span style="color:#fff;font-weight:bold">try</span>{
+                            <span style="color:#fff;font-weight:bold">var</span> x = onRejected(that.reason);  
+                            <span style="color:#007f7f">// TODO 解析函数
+</span><span style="color:#007f7f"></span>                            analysisPromise(promise, x, resolve, reject)
+                        }<span style="color:#fff;font-weight:bold">catch</span>(e){
+                            reject(e);
+                        }
+                    }, <span style="color:#ff0;font-weight:bold">0</span>)
+                });
+            }
+        }<span style="color:#fff;font-weight:bold">catch</span>(err){
+            reject(err)
+        }
+    })
+    <span style="color:#fff;font-weight:bold">return</span> promise
+}
+<span style="color:#fff;font-weight:bold">function</span> analysisPromise(promise, x, resolve, reject){
+    <span style="color:#fff;font-weight:bold">if</span>(promise === x) {
+        <span style="color:#fff;font-weight:bold">return</span> reject(<span style="color:#fff;font-weight:bold">new</span> TypeError(<span style="color:#0ff;font-weight:bold">&#34;循环引用&#34;</span>));
+    }
+    <span style="color:#fff;font-weight:bold">if</span>(x === <span style="color:#fff;font-weight:bold">null</span>){
+        <span style="color:#fff;font-weight:bold">return</span> resolve(x)
+    }
+    <span style="color:#fff;font-weight:bold">if</span>(<span style="color:#fff;font-weight:bold">typeof</span> x !== <span style="color:#0ff;font-weight:bold">&#34;object&#34;</span> &amp;&amp; <span style="color:#fff;font-weight:bold">typeof</span> x !== <span style="color:#0ff;font-weight:bold">&#39;function&#39;</span>){
+        <span style="color:#fff;font-weight:bold">return</span> resolve(x);
+    }
+    <span style="color:#fff;font-weight:bold">var</span> called;
+    <span style="color:#fff;font-weight:bold">try</span>{
+        <span style="color:#fff;font-weight:bold">var</span> then = x.then
+        <span style="color:#fff;font-weight:bold">if</span> (<span style="color:#fff;font-weight:bold">typeof</span> then !== <span style="color:#0ff;font-weight:bold">&#34;function&#34;</span>) {
+            <span style="color:#fff;font-weight:bold">return</span> resolve(x);
+        }
+        then.call(x, <span style="color:#fff;font-weight:bold">function</span>(y){
+            <span style="color:#fff;font-weight:bold">if</span>(called)<span style="color:#fff;font-weight:bold">return</span>;
+            called = <span style="color:#fff;font-weight:bold">true</span>;   
+            analysisPromise(promise, y, resolve, reject);
+        }, <span style="color:#fff;font-weight:bold">function</span>(r){
+            <span style="color:#fff;font-weight:bold">if</span>(called)<span style="color:#fff;font-weight:bold">return</span>;
+            called = <span style="color:#fff;font-weight:bold">true</span>;
+            reject(r)
+        })
+    }<span style="color:#fff;font-weight:bold">catch</span>(e){
+        <span style="color:#fff;font-weight:bold">if</span>(called)<span style="color:#fff;font-weight:bold">return</span>;
+        called = <span style="color:#fff;font-weight:bold">true</span>;
+        reject(e);
+    }
+}
+</code></pre></div>
+<h2 id="用es6的新语法重写一下">用ES6的新语法重写一下</h2>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#fff;font-weight:bold">class</span> <span style="color:#fff;font-weight:bold">Promise</span> {
+  constructor(executor) {
+    <span style="color:#fff;font-weight:bold">this</span>.status = <span style="color:#0ff;font-weight:bold">&#39;pending&#39;</span>; <span style="color:#007f7f">// 初始状态为pending
+</span><span style="color:#007f7f"></span>    <span style="color:#fff;font-weight:bold">this</span>.value = <span style="color:#fff;font-weight:bold">undefined</span>;
+    <span style="color:#fff;font-weight:bold">this</span>.reason = <span style="color:#fff;font-weight:bold">undefined</span>;
+    <span style="color:#fff;font-weight:bold">this</span>.onFullfilledList = []; <span style="color:#007f7f">// 存放onFullfilled函数的列表，多次调用then，会有多个onFullfilled函数
+</span><span style="color:#007f7f"></span>    <span style="color:#fff;font-weight:bold">this</span>.onRejectedList = []; <span style="color:#007f7f">// 作用同上
+</span><span style="color:#007f7f"></span>    <span style="color:#fff;font-weight:bold">const</span> resolve = value =&gt; {
+      <span style="color:#fff;font-weight:bold">if</span> (<span style="color:#fff;font-weight:bold">this</span>.status === <span style="color:#0ff;font-weight:bold">&#39;pending&#39;</span>) {
+        <span style="color:#fff;font-weight:bold">this</span>.status = <span style="color:#0ff;font-weight:bold">&#39;fulfilled&#39;</span>;
+        <span style="color:#fff;font-weight:bold">this</span>.value = value;
+        <span style="color:#fff;font-weight:bold">for</span> (<span style="color:#fff;font-weight:bold">let</span> fullfilled <span style="color:#fff;font-weight:bold">of</span> <span style="color:#fff;font-weight:bold">this</span>.onFullfilledList){
+          fullfilled();
+        }
+      }
+    }
+    <span style="color:#fff;font-weight:bold">const</span> reject = reason =&gt; {
+      <span style="color:#fff;font-weight:bold">if</span> (<span style="color:#fff;font-weight:bold">this</span>.status === <span style="color:#0ff;font-weight:bold">&#39;pending&#39;</span>) {
+        <span style="color:#fff;font-weight:bold">this</span>.status = <span style="color:#0ff;font-weight:bold">&#39;rejected&#39;</span>;
+        <span style="color:#fff;font-weight:bold">this</span>.reason = reason;
+        <span style="color:#fff;font-weight:bold">for</span> (<span style="color:#fff;font-weight:bold">let</span> rejected <span style="color:#fff;font-weight:bold">of</span> <span style="color:#fff;font-weight:bold">this</span>.onRejectedList){
+          rejected();
+        }
+      }
+    }
+    <span style="color:#fff;font-weight:bold">try</span> {
+      executor(resolve, reject)
+    } <span style="color:#fff;font-weight:bold">catch</span> (err) {
+      reject(err) 
+    }
+  }
+  then(onFullfilled, onRejected) {
+    <span style="color:#fff;font-weight:bold">const</span> promise = <span style="color:#fff;font-weight:bold">new</span> <span style="color:#fff;font-weight:bold">Promise</span>((resolve, reject) =&gt; {
+      onFullfilled = <span style="color:#fff;font-weight:bold">typeof</span> onFullfilled === <span style="color:#0ff;font-weight:bold">&#39;function&#39;</span> ? onFullfilled : value =&gt; resolve(value);
+      onRejected = <span style="color:#fff;font-weight:bold">typeof</span> onRejected === <span style="color:#0ff;font-weight:bold">&#39;function&#39;</span> ? onRejected : reason =&gt; reject(reason);
+      <span style="color:#fff;font-weight:bold">try</span> {
+        <span style="color:#fff;font-weight:bold">if</span> (<span style="color:#fff;font-weight:bold">this</span>.status === <span style="color:#0ff;font-weight:bold">&#39;fulfilled&#39;</span>) {
+          setTimeout(() =&gt; {
+            <span style="color:#fff;font-weight:bold">try</span> {
+              <span style="color:#fff;font-weight:bold">let</span> x = onFullfilled(<span style="color:#fff;font-weight:bold">this</span>.value); <span style="color:#007f7f">// fulfilled状态则立即执行onFullfilled函数
+</span><span style="color:#007f7f"></span>              <span style="color:#007f7f">// TODO 解析函数
+</span><span style="color:#007f7f"></span>              analysisPromise(promise, x, resolve, reject) <span style="color:#007f7f">//这里直接传入promise会抛异常，因为promise并没有定义
+</span><span style="color:#007f7f"></span>            } <span style="color:#fff;font-weight:bold">catch</span> (e) {
+              reject(e);
+            }
+          }, <span style="color:#ff0;font-weight:bold">0</span>);
+        }
+        <span style="color:#fff;font-weight:bold">if</span> (<span style="color:#fff;font-weight:bold">this</span>.status === <span style="color:#0ff;font-weight:bold">&#39;rejected&#39;</span>) {
+          setTimeout(() =&gt; {
+            <span style="color:#fff;font-weight:bold">try</span> {
+              <span style="color:#fff;font-weight:bold">let</span> x = onRejected(<span style="color:#fff;font-weight:bold">this</span>.reason);
+              <span style="color:#007f7f">// TODO 解析函数
+</span><span style="color:#007f7f"></span>              analysisPromise(promise, x, resolve, reject)
+            } <span style="color:#fff;font-weight:bold">catch</span> (e) {
+              reject(e);
+            }
+          }, <span style="color:#ff0;font-weight:bold">0</span>)
+        }
+        <span style="color:#fff;font-weight:bold">if</span> (<span style="color:#fff;font-weight:bold">this</span>.status === <span style="color:#0ff;font-weight:bold">&#39;pending&#39;</span>) {
+          <span style="color:#fff;font-weight:bold">this</span>.onFullfilledList.push(() =&gt; { <span style="color:#007f7f">// 这里需要在onFullfilled函数之外包一层
+</span><span style="color:#007f7f"></span>            setTimeout(() =&gt; {
+              <span style="color:#fff;font-weight:bold">try</span> {
+                <span style="color:#fff;font-weight:bold">let</span> x = onFullfilled(<span style="color:#fff;font-weight:bold">this</span>.value);
+                <span style="color:#007f7f">// TODO 解析函数
+</span><span style="color:#007f7f"></span>                analysisPromise(promise, x, resolve, reject)
+              } <span style="color:#fff;font-weight:bold">catch</span> (e) {
+                reject(e);
+              }
+            }, <span style="color:#ff0;font-weight:bold">0</span>)
+          });
+          <span style="color:#fff;font-weight:bold">this</span>.onRejectedList.push(() =&gt; {
+            setTimeout(() =&gt; {
+              <span style="color:#fff;font-weight:bold">try</span> {
+                <span style="color:#fff;font-weight:bold">let</span> x = onRejected(<span style="color:#fff;font-weight:bold">this</span>.reason);
+                <span style="color:#007f7f">// TODO 解析函数
+</span><span style="color:#007f7f"></span>                analysisPromise(promise, x, resolve, reject)
+              } <span style="color:#fff;font-weight:bold">catch</span> (e) {
+                reject(e);
+              }
+            }, <span style="color:#ff0;font-weight:bold">0</span>)
+          });
+        }
+      } <span style="color:#fff;font-weight:bold">catch</span> (err) {
+        reject(err)
+      }
+    })
+    <span style="color:#fff;font-weight:bold">return</span> promise
+  }
+}
+<span style="color:#fff;font-weight:bold">function</span> analysisPromise(promise, x, resolve, reject) {
+  <span style="color:#fff;font-weight:bold">if</span> (promise === x) {
+    <span style="color:#fff;font-weight:bold">return</span> reject(<span style="color:#fff;font-weight:bold">new</span> TypeError(<span style="color:#0ff;font-weight:bold">&#34;循环引用&#34;</span>));
+  }
+  <span style="color:#fff;font-weight:bold">if</span> (x === <span style="color:#fff;font-weight:bold">null</span>) {
+    <span style="color:#fff;font-weight:bold">return</span> resolve(x)
+  }
+  <span style="color:#fff;font-weight:bold">if</span> (<span style="color:#fff;font-weight:bold">typeof</span> x !== <span style="color:#0ff;font-weight:bold">&#34;object&#34;</span> &amp;&amp; <span style="color:#fff;font-weight:bold">typeof</span> x !== <span style="color:#0ff;font-weight:bold">&#39;function&#39;</span>) {
+    <span style="color:#fff;font-weight:bold">return</span> resolve(x);
+  }
+  <span style="color:#fff;font-weight:bold">let</span> called;
+  <span style="color:#fff;font-weight:bold">try</span> {
+    <span style="color:#fff;font-weight:bold">let</span> then = x.then
+    <span style="color:#fff;font-weight:bold">if</span> (<span style="color:#fff;font-weight:bold">typeof</span> then !== <span style="color:#0ff;font-weight:bold">&#34;function&#34;</span>) {
+      <span style="color:#fff;font-weight:bold">return</span> resolve(x);
+    }
+    then.call(x, y =&gt; {
+      <span style="color:#fff;font-weight:bold">if</span> (called) <span style="color:#fff;font-weight:bold">return</span>;
+      called = <span style="color:#fff;font-weight:bold">true</span>;
+      analysisPromise(promise, y, resolve, reject);
+    }, r =&gt; {
+      <span style="color:#fff;font-weight:bold">if</span> (called) <span style="color:#fff;font-weight:bold">return</span>;
+      called = <span style="color:#fff;font-weight:bold">true</span>;
+      reject(r)
+    })
+  } <span style="color:#fff;font-weight:bold">catch</span> (e) {
+    <span style="color:#fff;font-weight:bold">if</span> (called) <span style="color:#fff;font-weight:bold">return</span>;
+    called = <span style="color:#fff;font-weight:bold">true</span>;
+    reject(e);
+  }
+}
+</code></pre></div>
+<h2 id="单元测试">单元测试</h2>
+
+<p>github上有一个开源的套件，用于测试Promise实现与Promises / A +规范的合规性。
+promises-tests: <a href="https://github.com/promises-aplus/promises-tests">https://github.com/promises-aplus/promises-tests</a></p>
+
+<p>验证结果：
+<img src="promise测试结果.jpg" alt="promise测试结果" /></p>
 
       </div>
 

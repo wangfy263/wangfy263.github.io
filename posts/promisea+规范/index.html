@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zn">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Wang">
+    <meta name="description" content="John Doe&#39;s personal website">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="【转】Promise/A&#43;规范"/>
+<meta name="twitter:description" content="这是一篇转自网络的Promise/A&#43;规范的翻译，原文地址：https://segmentfault.com/a/1190000016411620
+Promise/A&#43;规范原文地址：https://promisesaplus.com/
+记录在这里方便自己查阅参考:
+翻译内容 一个标准声明、可操作的JavaScript Promise——出自开发者，为了开发者。
+一个promise代表一个异步操作的最终结果。与promise交互的主要方法是通过它的then函数。这个函数注册一个回调函数来接收promise最终的值（value）或者是没有成功的原因（reason）。
+这篇文档详细说明了then方法的具体行为，它为所有的符合Promise/A&#43;规范的实现提供了一个基础的交互。像这样，这个规范应该设计的非常稳定。尽管Promise/A&#43;组织可能偶尔通过一些向后兼容的小修改来调整这个文档来适应新发现的场景，我们只会在经历过了小心的思考、讨论和测试后增加大的、不向后兼容的修改。
+从历史上来看，Promise/A&#43;阐述了更早的Promise/A的行为规范，并且在其基础上进行了扩展，覆盖了一些实际行为和之前遗漏的问题。
+最终，核心的Promise/A&#43;文档不关心如何去创建、完成（resolve）或者拒绝（reject）一个Promise，而是聚焦在提供一个可交互的then函数。在将来的其他规范中可能会涉及这些没有提及的内容。
+1. 术语 1.1. &ldquo;promise&rdquo;是一个对象或者函数，它拥有一个符合文档中描述行为的then方法。
+1.2. &ldquo;thenable&rdquo;是一个有then方法的对象或者函数。
+1.3. &ldquo;value&rdquo;是一个合法的JavaScript值（包括undefined, 一个thenable或者一个promise）。
+1.4. &ldquo;exception&rdquo;是一个使用在throw语句中的抛出来的值。
+1.5. &ldquo;reason&rdquo;是一个用来表示promise拒绝的原因的值。
+2. 要求 2.1promise状态 一个promise必须处于一下三种状态：pending、fulfilled或者rejected。 2.1.1. 当处于pending状态时，promise：
+2.1.1.1. 可能会转换成任何其他的状态。
+2.1.2. 当处于fulfilled状态时，promise：
+2.1.2.1. 禁止转换成其他状态。
+2.1.2.2. 必须有一个无法更改的值。
+2.1.3. 当处于rejected状态时，promise：
+2.1.3.1. 禁止转换成其他状态。
+2.1.3.2. 必须有一个无法更改的原因。
+在这里，无法更改意味着全等（例如===），但是不代表深比较相等。
+2.2 then方法 promise必须包含一个then方法来访问它当前或者最终的值或者原因。
+Promise的then方法接收两个参数：
+promise.then(onFulfilled, onRejected)  2.2.1. onFulfilled和onRejected函数有都有可选的参数：
+2.2.1.1. 如果onFulfilled不是一个函数，那么它必须被忽略掉。
+2.2.1.2. 如果onRejected不是一个函数，那么它必须被忽略掉。
+2.2.2. 如果onFulfilled是一个函数：
+2.2.2.1. 它必须在promise到fulfilled状态后触发，promise的值是它的第一个参数。
+2.2.2.2. 它在一个promise到fulfilled状态之前禁止被触发。
+2.2.2.3. 它禁止被触发多次。
+2.2.3. 如果onRejected是一个函数：
+2.2.3.1. 它必须在promise到rejected状态后触发，promise的原因是它的第一个参数。"/>
+
+
+    <base href="https://wangfy263.github.io/posts/promisea&#43;%E8%A7%84%E8%8C%83/">
+    <title>
+  【转】Promise/A&#43;规范 · Wang
+</title>
+
+    <link rel="canonical" href="https://wangfy263.github.io/posts/promisea&#43;%E8%A7%84%E8%8C%83/">
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700|Merriweather:300,700|Source+Code+Pro:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css" integrity="sha256-oSrCnRYXvHG31SBifqP2PM1uje7SJUyX0nTwO2RJV54=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://wangfy263.github.io/css/coder.min.ac37073bc2826cd28ef57364a9fe339de7ebcb26dafc22fd832cb35cf5b1d048.css" integrity="sha256-rDcHO8KCbNKO9XNkqf4znefryyba/CL9gyyzXPWx0Eg=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://wangfy263.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://wangfy263.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    
+
+    <meta name="generator" content="Hugo 0.54.0" />
+  </head>
+
+  <body class=" ">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://wangfy263.github.io/">
+      Wang
+    </a>
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://wangfy263.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://wangfy263.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://wangfy263.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://wangfy263.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+        
+        
+        
+          
+        
+          
+            
+              <li class="navigation-item menu-separator">
+                <span>|</span>
+              </li>
+              
+            
+            <li class="navigation-item">
+              <a href="https://wangfy263.github.io/zn/">中文</a>
+            </li>
+          
+        
+      
+    </ul>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">【转】Promise/A&#43;规范</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2019-02-12T15:55:19Z'>
+                February 12, 2019
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              One minute read
+            </span>
+          </div>
+          
+          
+        </div>
+      </header>
+
+      <div>
+        
+
+<p>这是一篇转自网络的Promise/A+规范的翻译，原文地址：<a href="https://segmentfault.com/a/1190000016411620">https://segmentfault.com/a/1190000016411620</a></p>
+
+<p>Promise/A+规范原文地址：<a href="https://promisesaplus.com/">https://promisesaplus.com/</a></p>
+
+<p>记录在这里方便自己查阅参考:</p>
+
+<h2 id="翻译内容">翻译内容</h2>
+
+<p>一个标准声明、可操作的JavaScript Promise——出自开发者，为了开发者。</p>
+
+<p>一个promise代表一个异步操作的最终结果。与promise交互的主要方法是通过它的then函数。这个函数注册一个回调函数来接收promise最终的值（value）或者是没有成功的原因（reason）。</p>
+
+<p>这篇文档详细说明了then方法的具体行为，它为所有的符合Promise/A+规范的实现提供了一个基础的交互。像这样，这个规范应该设计的非常稳定。尽管Promise/A+组织可能偶尔通过一些向后兼容的小修改来调整这个文档来适应新发现的场景，我们只会在经历过了小心的思考、讨论和测试后增加大的、不向后兼容的修改。</p>
+
+<p>从历史上来看，Promise/A+阐述了更早的Promise/A的行为规范，并且在其基础上进行了扩展，覆盖了一些实际行为和之前遗漏的问题。</p>
+
+<p>最终，核心的Promise/A+文档不关心如何去创建、完成（resolve）或者拒绝（reject）一个Promise，而是聚焦在提供一个可交互的then函数。在将来的其他规范中可能会涉及这些没有提及的内容。</p>
+
+<h2 id="1-术语">1. 术语</h2>
+
+<p>1.1. &ldquo;promise&rdquo;是一个对象或者函数，它拥有一个符合文档中描述行为的then方法。</p>
+
+<p>1.2. &ldquo;thenable&rdquo;是一个有then方法的对象或者函数。</p>
+
+<p>1.3. &ldquo;value&rdquo;是一个合法的JavaScript值（包括undefined, 一个thenable或者一个promise）。</p>
+
+<p>1.4. &ldquo;exception&rdquo;是一个使用在throw语句中的抛出来的值。</p>
+
+<p>1.5. &ldquo;reason&rdquo;是一个用来表示promise拒绝的原因的值。</p>
+
+<h2 id="2-要求">2. 要求</h2>
+
+<h3 id="2-1promise状态">2.1promise状态</h3>
+
+<p>一个promise必须处于一下三种状态：pending、fulfilled或者rejected。
+2.1.1. 当处于pending状态时，promise：</p>
+
+<p>2.1.1.1. 可能会转换成任何其他的状态。</p>
+
+<p>2.1.2. 当处于fulfilled状态时，promise：</p>
+
+<p>2.1.2.1. 禁止转换成其他状态。</p>
+
+<p>2.1.2.2. 必须有一个无法更改的值。</p>
+
+<p>2.1.3. 当处于rejected状态时，promise：</p>
+
+<p>2.1.3.1. 禁止转换成其他状态。</p>
+
+<p>2.1.3.2. 必须有一个无法更改的原因。</p>
+
+<p>在这里，无法更改意味着全等（例如===），但是不代表深比较相等。</p>
+
+<h3 id="2-2-then方法">2.2 then方法</h3>
+
+<p>promise必须包含一个then方法来访问它当前或者最终的值或者原因。</p>
+
+<p>Promise的then方法接收两个参数：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">promise.then(onFulfilled, onRejected)
+</code></pre></div>
+<p>2.2.1. onFulfilled和onRejected函数有都有可选的参数：</p>
+
+<p>2.2.1.1. 如果onFulfilled不是一个函数，那么它必须被忽略掉。</p>
+
+<p>2.2.1.2. 如果onRejected不是一个函数，那么它必须被忽略掉。</p>
+
+<p>2.2.2. 如果onFulfilled是一个函数：</p>
+
+<p>2.2.2.1. 它必须在promise到fulfilled状态后触发，promise的值是它的第一个参数。</p>
+
+<p>2.2.2.2. 它在一个promise到fulfilled状态之前禁止被触发。</p>
+
+<p>2.2.2.3. 它禁止被触发多次。</p>
+
+<p>2.2.3. 如果onRejected是一个函数：</p>
+
+<p>2.2.3.1. 它必须在promise到rejected状态后触发，promise的原因是它的第一个参数。</p>
+
+<p>2.2.2.2. 它在一个promise到rejected之前禁止被触发。</p>
+
+<p>2.2.2.3. 它禁止被触发多次。</p>
+
+<p><em>2.2.4. onFulfilled或者onRejected只有在执行上下文堆栈只有平台代码时才能被触发。</em></p>
+
+<p><em>2.2.5. onFulfilled和onRejected必须作为函数被调用（例如没有this值）。</em></p>
+
+<p>2.2.6. then方法可能在相同的promise中被调用多次。</p>
+
+<p>2.2.6.1. 如果promise到了fullfilled状态，那么所有的onFulfilled回调函数都必须按照他们原有的顺序进行调用执行。</p>
+
+<p>2.2.6.2. 如果promise到了rejected状态，那么所有的onRejected回调函数都必须按照他们原有的顺序进行调用执行。</p>
+
+<p>2.2.7. then方法必须返回一个promise：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">promise2 = promise1.then(onFulfilled, onRejected);
+</code></pre></div>
+<p>2.2.7.1. 如果onFulfilled或者onRejected方法返回一个值x，那么执行promise的解析过程<a href="promise2, x">[Resolve]</a>。</p>
+
+<p>2.2.7.2. 如果onFulfilled或者onRejected方法抛出一个异常e，promise2必须使用e作为原因拒绝掉（rejected）。</p>
+
+<p>2.2.7.3. 如果onFulfilled不是一个函数并且promise1到了fulfilled状态，那么promise2必须在与promise1的值相同的情况下转换到fulfilled状态。</p>
+
+<p>2.2.7.4. 如果onRejected不是一个函数并且promise1到了rejected状态，那么promise2必须在与promise1的原因相同的情况下转换到rejected状态。</p>
+
+<h3 id="2-3-promise解析函数">2.3. promise解析函数</h3>
+
+<p>promise解析函数是一个输入一个promise或者一个值的抽象的操作，我们表示为<a href="promise, x">[Resolve]</a>。如果x是一个thenable对象，在假定x的行为至少有点像一个promise的情况下，它会尝试让promise转换到x的状态。否则，他会用x的值完成promise的状态。</p>
+
+<p>这种thenable对象的方式允许promise实现交互，只要他们暴露一个符合Promise/A+规范的then函数。它还允许Promise/A+的实现支持一个有合适的then方法的不兼容的实现。</p>
+
+<p>运行<a href="promise, x">[Resolve]</a>,需要遵循以下步骤：</p>
+
+<p>2.3.1. 如果promise和x指向同一个对象，那么用TypeError作为原因拒绝promise。</p>
+
+<p>2.3.2. 如果x是一个promise，判断它的状态：</p>
+
+<p>2.3.2.1. 如果x是pending状态，promise保留pending状态直到x变成fulfilled状态或者rejected状态。</p>
+
+<p>2.3.2.2. 如果x是fulfilled状态，那么用同样的值将整个promise完成。</p>
+
+<p>2.3.2.3. 如果x是rejected状态，那么用同样的原因拒绝promise。</p>
+
+<p>2.3.3. 否则，如果x是一个对象或者函数，</p>
+
+<p>2.3.3.1. 让then变成x.then。</p>
+
+<p>2.3.3.2. 如果在检测x.then这个属性的结果时抛出一个异常e，把e作为原因拒绝promise。</p>
+
+<p>2.3.3.3. 如果then是一个函数，那么用x作为this来调用它，第一个参数是resolvePromise，第二个参数是rejectPromise：</p>
+
+<p>2.3.3.3.1. 如果resolvePromise被值y调用，那么运行<a href="promise, y">[Resolve]</a>。</p>
+
+<p>2.3.3.3.2. 如果rejectPromise被原因r触发，那么用r来拒绝promise。</p>
+
+<p>2.3.3.3.3. 如果resolvePromise和rejectPromise都被调用，或者使用相同的参数多次调用，那么第一次调用生效，其他之后的任何调用都忽略掉。</p>
+
+<p>2.3.3.3.4. 如果在调用then方法时抛出了一个异常e,</p>
+
+<p>2.3.3.3.4.1. 如果resolvePromise和rejectPromise已经被调用了那么就忽略掉它。</p>
+
+<p>2.3.3.3.4.2. 否则，使用e作为原因拒绝promise。</p>
+
+<p>2.3.3.4. 如果then不是一个函数，那么用x完成promise。</p>
+
+<p>2.3.4. 如果x不是一个对象或者函数，那么用x完成promise。</p>
+
+<p>如果一个promise是通过在环形的thenable链中的一个thenable来完成的，如递归的<a href="promise, thenable">[Resolve]</a>类型再次调用<a href="promise, thenable">[Resolve]</a>，遵循上述的规则会导致无穷递归。对这种递归情况的检测并且使用TypeError作为原因进行拒绝，我们鼓励实现，但不要求。</p>
+
+<h2 id="3-注意事项">3. 注意事项</h2>
+
+<p>3.1. 在这里&rdquo;平台代码&rdquo;（platform code）意味着引擎，环境和promise实现代码。在实践中，这个要求确保了onFulfilled和onRejected是异步执行的，then调用也是在循环之后，有一个新的堆栈信息。这可以通过一个宏任务（macro-task）机制例如setTimeout或者setImmediate来实现，也可以通过一个微任务（micro-task）例如MutationObserver或者process.nextTick来实现。如果promise的实现考虑平台代码，那么它自己可能会带一个任务执行队列或者“蹦床”来处理被调用情况。</p>
+
+<p>3.2. 在严格模式下，this是在promise里面将会是undefined。在松散模型下，他代表的是全局对象。</p>
+
+<p>3.3. 如果实现满足所有要求的话，可以允许promise2 === promise1。每一个实现都应该表明是否支持promise2 === promise1，如果支持则是需要在什么条件下。</p>
+
+<p>3.4. 通常来说，如果按照当前的实现方式，我们只能知道x是一个真的promise。这一条允许你在具体实现的使用过程中来判断未知的promise的状态。</p>
+
+<p>3.5. 在程序中，首先存储x.then的引用，其次测试这个引用，然后再调用这个引用，避免多次访问x.then属性。这样的预防措施对于确保那些会在两次访问之间可能变化的属性值获取到一致的结果非常重要。</p>
+
+<p>3.6. 实现中不应该对thenable调用链值设置任意深度限制，而是应该假设这个递归的限制值是无穷大。只有真正的循环才会导致TypeError；如果遇到了一个长度为无穷大的不同的thenable，保证在正确的行为下一直递归。</p>
+
+      </div>
+
+      <footer>
+        <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <footer class="footer">
+  <section class="container">
+    
+      <p>Enter a text here.</p>
+    
+     © 2019
+    
+       · 
+      Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    
+    
+       · 
+      [<a href="https://github.com/luizdepra/hugo-coder/tree/"></a>]
+    
+  </section>
+</footer>
+
+    </main>
+
+    
+
+  </body>
+
+</html>
